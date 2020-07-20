@@ -1,4 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
+    <item
+        android:id="@+id/bot_nav_popular"
+        android:enabled="true"
+        android:icon="@drawable/ic_heart_white_24dp"
+        android:title="@string/bot_nav_popular_label" />
+    <item
+        android:id="@+id/bot_nav_top_rated"
+        android:enabled="true"
+        android:icon="@drawable/ic_badge_white_24dp"
+        android:title="@string/bot_nav_top_rated_label" />
+    <item
+        android:id="@+id/bot_nav_favorites"
+        android:enabled="true"
+        android:icon="@drawable/ic_star_white_24dp"
+        android:title="@string/bot_nav_favorites" />
 </menu>
