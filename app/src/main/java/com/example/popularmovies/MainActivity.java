@@ -9,10 +9,12 @@ import android.os.Bundle;
 
 import com.example.popularmovies.databinding.ActivityMainBinding;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements MovieAdapter.MovieAdapterOnClickHandler {
 
+    final static int NUMBER_OF_MOVIES = 20;
 
     RecyclerView moviePostersRv;
+    MovieAdapter movieAdapter;
 
     ActivityMainBinding mBinding;
     @Override
@@ -29,11 +31,23 @@ public class MainActivity extends AppCompatActivity {
         moviePostersRv.setLayoutManager(moviePostersRvLayoutManager);
         moviePostersRv.setHasFixedSize(true);
 
-        //Bind rv to layout
+        //Tie Adapter
+        movieAdapter = new MovieAdapter(this, this);
+        moviePostersRv.setAdapter(movieAdapter);
+
+        //TODO add option to show loading data
+
 
 
 
     }
 
+    /**
+     * Gets called when a list item is clicked
+     */
+    @Override
+    public void onClick() {
+
+    }
     //TODO save info onSavedInstanceState when device is rotated
 }
