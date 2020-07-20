@@ -6,5 +6,15 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
+    <!-- TODO add view components based on mockup UX:
+        recycler view, bottom nav_bar -->
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/movies_recycler_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_constraintTop_toTopOf="parent"
+        android:layout_constraintLeft_toLeftOf="parent"
+        />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>
