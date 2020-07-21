@@ -5,9 +5,17 @@ import androidx.databinding.DataBindingUtil;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Context;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 
+import com.example.popularmovies.Data.Movie;
+import com.example.popularmovies.Utils.JsonUtils;
+import com.example.popularmovies.Utils.NetworkUtils;
 import com.example.popularmovies.databinding.ActivityMainBinding;
+
+import java.net.URL;
 
 public class MainActivity extends AppCompatActivity implements MovieAdapter.MovieAdapterOnClickHandler {
 
@@ -50,4 +58,5 @@ public class MainActivity extends AppCompatActivity implements MovieAdapter.Movi
 
     }
     //TODO save info onSavedInstanceState when device is rotated
+
 }

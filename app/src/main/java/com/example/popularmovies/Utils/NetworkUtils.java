@@ -22,16 +22,23 @@ public final class NetworkUtils {
     private static String API_KEY;
     private final static String TAG = NetworkUtils.class.getSimpleName();
 
-    NetworkUtils(Context context) {
-        API_KEY = context.getResources().getString(R.string.TheMovieDbApiKey);
-    }
-
     private static String BASE_MOVIE_URL = "https://api.themoviedb.org/3/movie/";
     private static String TOP_RATED_QUERY = "top_rated";
     private static String POPULAR_QUERY = "popular";
     private static String API_QUERY = "api_key";
 
     private static String BASE_IMAGE_URL = "https://image.tmdb.org/t/p/";
+
+    /*
+     * get API key from resources - for that we need context
+     */
+    private static String getApiKey(Context context) {
+        return context.getResources().getString(R.string.TheMovieDbApiKey);
+    }
+
+    /*
+     * Methods for creating Uri using base_url and different querys per TheMovieDB Api doc
+     */
 
     private static Uri buildMovieUrlWithPopular() {
         String popularBasePath = BASE_MOVIE_URL + POPULAR_QUERY;
@@ -49,6 +56,17 @@ public final class NetworkUtils {
         return movieQueryUri;
     }
 
+    private static Uri buildImageUri(String file_size, String file_path) {
+        String imagePath = BASE_IMAGE_URL + file_size + "/" + file_path;
+        Uri imageQueryUri = Uri.parse(imagePath).buildUpon().build();
+
+        return imageQueryUri;
+    }
+
+    /*
+     * use given uri to create a URL to query server
+     * returns null if failed to create proper url
+     */
     private static URL createURL(Uri uri) {
         try {
             URL url = new URL(uri.toString());
@@ -60,18 +78,12 @@ public final class NetworkUtils {
         }
     }
 
-    private static Uri buildImageUri(String file_size, String file_path) {
-        String imagePath = BASE_IMAGE_URL + file_size + "/" + file_path;
-        Uri imageQueryUri = Uri.parse(imagePath).buildUpon().build();
-
-        return imageQueryUri;
-    }
-
     /**
      * get url to query for movies sorting by most popular
      * @return the appropiate url
      */
-    public static URL getUrlPopular() {
+    public static URL getUrlPopular(Context context) {
+        API_KEY = getApiKey(context);
         Uri popularUri = buildMovieUrlWithPopular();
         return createURL(popularUri);
     }
@@ -80,7 +92,8 @@ public final class NetworkUtils {
      * get url to query for movies sorted by rating
      * @return the appropiate url
      */
-    public static URL getUrlTopRated() {
+    public static URL getUrlTopRated(Context context) {
+        API_KEY = getApiKey(context);
         Uri topRatedUri = buildMovieUrlWithTopRated();
         return createURL(topRatedUri);
     }
@@ -91,7 +104,8 @@ public final class NetworkUtils {
      * @param file_path path to image file
      * @return
      */
-    public static URL getUrlImage(String file_size, String file_path) {
+    public static URL getUrlImage(Context context, String file_size, String file_path) {
+        API_KEY = getApiKey(context);
         Uri imageQueryUri = buildImageUri(file_size, file_path);
         return createURL(imageQueryUri);
     }
