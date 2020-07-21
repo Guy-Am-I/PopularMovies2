@@ -33,8 +33,6 @@ public class Movie {
         this.isFav = false;
     }
 
-
-
     public Movie(int id, String title, String posterPath, String backgdropPath, String[] trailerPaths, String synopsis, String[] reviews, double user_rating, String releaseDate, boolean isFav) {
         this.id = id;
         this.title = title;
