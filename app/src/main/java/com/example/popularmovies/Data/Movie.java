@@ -8,7 +8,7 @@ public class Movie {
     private String title;
     private String posterPath;
     private String backgdropPath;
-    private String[] trailerPaths;
+    private int[] clip_keys;
     private String synopsis;
     private String[] reviews;
     private double user_rating;
@@ -25,7 +25,7 @@ public class Movie {
         this.title = null;
         this.posterPath = null;
         this.backgdropPath = null;
-        this.trailerPaths = null;
+        this.clip_keys = null;
         this.synopsis = null;
         this.reviews = null;
         this.user_rating = 0;
@@ -33,12 +33,12 @@ public class Movie {
         this.isFav = false;
     }
 
-    public Movie(int id, String title, String posterPath, String backgdropPath, String[] trailerPaths, String synopsis, String[] reviews, double user_rating, String releaseDate, boolean isFav) {
+    public Movie(int id, String title, String posterPath, String backgdropPath, int[] clip_keys, String synopsis, String[] reviews, double user_rating, String releaseDate, boolean isFav) {
         this.id = id;
         this.title = title;
         this.posterPath = posterPath;
         this.backgdropPath = backgdropPath;
-        this.trailerPaths = trailerPaths;
+        this.clip_keys = clip_keys;
         this.synopsis = synopsis;
         this.reviews = reviews;
         this.user_rating = user_rating;
@@ -78,12 +78,12 @@ public class Movie {
         this.backgdropPath = backgdropPath;
     }
 
-    public String[] getTrailerPaths() {
-        return trailerPaths;
+    public int[] getTrailerPaths() {
+        return clip_keys;
     }
 
-    public void setTrailerPaths(String[] trailerPaths) {
-        this.trailerPaths = trailerPaths;
+    public void setTrailerPaths(int[] clip_ids) {
+        this.clip_keys = clip_ids;
     }
 
     public String getSynopsis() {

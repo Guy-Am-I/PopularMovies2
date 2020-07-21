@@ -28,7 +28,7 @@ public class MovieDbContract {
         //Table name + labels
         public static final String TABLE_NAME = "movies";
 
-        public static final String COLUMN_ID = "id"; //stored as int
+        public static final String COLUMN_MOVIE_ID = "id"; //stored as int
         public static final String COLUMN_TITLE = "title"; //stored as string
         public static final String COLUMN_POSTER_PATH = "poster_path"; //stored as string
         public static final String COLUMN_BACKDROP_PATH = "backdrop_path"; //stored as string
