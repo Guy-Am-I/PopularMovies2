@@ -14,7 +14,7 @@ public class MovieDbContract {
     // This Uri will be used by anyone trying to get data from our app (DB)
     public static final Uri BASE_CONTENT_URI = Uri.parse("content:// " + CONTENT_AUTHORITY);
 
-    //used in conkunction with the base Uri to reach a movie and get its data
+    //used in conkunction with the base Uri to reach a movie (any) and get its data
     public static final String PATH_MOVIE = "movie";
 
 
@@ -35,7 +35,7 @@ public class MovieDbContract {
         public static final String COLUMN_SYNOPSIS = "synopsis"; //stored as string
         public static final String COLUMN_USER_RATING = "user_rating"; //stored as double
         public static final String COLUMN_RELEASE_DATE = "release_date"; //stored as string
-        public static final String COLUMN_IS_FAV = "favorite"; //stored as boolean
+        public static final String COLUMN_IS_FAV = "favorite"; //stored as int
 
         /**
          * Builds a uri used to query for a specific movie using its id
