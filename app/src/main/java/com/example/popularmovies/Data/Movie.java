@@ -12,28 +12,11 @@ public class Movie {
     private String synopsis;
     private String[] reviews;
     private double user_rating;
+    private double popularity;
     private String releaseDate;
     private boolean isFav;
 
-    /**
-     * Create a new movie with a unique Id
-     * sets all values to null (rating = 0, isFav = false)
-     * @param id
-     */
-    public Movie(int id){
-        this.id = id;
-        this.title = null;
-        this.posterPath = null;
-        this.backgdropPath = null;
-        this.clip_keys = null;
-        this.synopsis = null;
-        this.reviews = null;
-        this.user_rating = 0;
-        this.releaseDate = null;
-        this.isFav = false;
-    }
-
-    public Movie(int id, String title, String posterPath, String backgdropPath, int[] clip_keys, String synopsis, String[] reviews, double user_rating, String releaseDate, boolean isFav) {
+    public Movie(int id, String title, String posterPath, String backgdropPath, int[] clip_keys, String synopsis, String[] reviews, double user_rating, double popularity, String releaseDate, boolean isFav) {
         this.id = id;
         this.title = title;
         this.posterPath = posterPath;
@@ -42,6 +25,7 @@ public class Movie {
         this.synopsis = synopsis;
         this.reviews = reviews;
         this.user_rating = user_rating;
+        this.popularity = popularity;
         this.releaseDate = releaseDate;
         this.isFav = isFav;
     }
@@ -108,6 +92,14 @@ public class Movie {
 
     public void setUser_rating(Double user_rating) {
         this.user_rating = user_rating;
+    }
+
+    public double getPopularity() {
+        return popularity;
+    }
+
+    public void setPopularity(double popularity) {
+        this.popularity = popularity;
     }
 
     public String getReleaseDate() {

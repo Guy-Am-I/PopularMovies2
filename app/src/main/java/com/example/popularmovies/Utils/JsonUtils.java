@@ -36,6 +36,7 @@ public final class JsonUtils {
         final String TMD_BACKDROP_PATH = "backdrop_path";
         final String TMD_SYNOPSIS = "overview";
         final String TMD_USER_RATING = "vote_average";
+        final String TMD_POPULARITY = "popularity";
         final String TMD_RELEASE_DATE = "release_date";
 
         //holds all data from the string
@@ -60,8 +61,9 @@ public final class JsonUtils {
             String synopsis = movieJSON.getString(TMD_SYNOPSIS);
             String releaseDate = movieJSON.getString(TMD_RELEASE_DATE);
             double user_rating = movieJSON.getDouble(TMD_USER_RATING);
+            double popularity = movieJSON.getDouble(TMD_POPULARITY);
 
-            Movie currentMovie = new Movie(id, title, posterPath, backdropPath, null, synopsis, null, user_rating, releaseDate, false);
+            Movie currentMovie = new Movie(id, title, posterPath, backdropPath, null, synopsis, null, user_rating, popularity, releaseDate, false);
 
             movies[i] = currentMovie;
         }

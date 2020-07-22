@@ -34,6 +34,7 @@ public class MovieDbContract {
         public static final String COLUMN_BACKDROP_PATH = "backdrop_path"; //stored as string
         public static final String COLUMN_SYNOPSIS = "synopsis"; //stored as string
         public static final String COLUMN_USER_RATING = "user_rating"; //stored as double
+        public static final String COLUMN_POPULARITY = "popularity"; //stored as double
         public static final String COLUMN_RELEASE_DATE = "release_date"; //stored as string
         public static final String COLUMN_IS_FAV = "favorite"; //stored as int
 
