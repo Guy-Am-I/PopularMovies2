@@ -1,18 +1,14 @@
 package com.example.popularmovies.Utils;
 
-import android.content.ContentProvider;
+import android.content.ContentValues;
 import android.content.Context;
-import android.os.AsyncTask;
-import android.util.Log;
-import android.widget.Toast;
 
-import com.example.popularmovies.Data.Movie;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.net.URL;
+import com.example.popularmovies.Data.MovieDbContract.MovieEntry;
 
 
 /*
@@ -26,7 +22,7 @@ public final class JsonUtils {
      * @return  Movie array containing all elements from JSON (in order of appearance)
      * @throws JSONException if there was an error parsing data
      */
-    public static Movie[] getMoviesFromJSON(Context context, String moviesJSONString) throws JSONException {
+    public static ContentValues[] getMoviesFromJSON(Context context, String moviesJSONString) throws JSONException {
 
         //JSON query strings to get movie per TheMovieDB api
         final String TMD_MOVIES_CODE = "results";
@@ -44,13 +40,13 @@ public final class JsonUtils {
 
         JSONArray moviesJSONArray = moviesJSON.getJSONArray(TMD_MOVIES_CODE);
         //!API supports a lot more movies in several pages - we just return first page for now
-        int number_of_movies = moviesJSONArray.length();
+        int number_of_movies_in_page = moviesJSONArray.length();
 
         //Movie array to represent movies parsed from JSON data
-        Movie[] movies = new Movie[number_of_movies];
+        ContentValues[] movies = new ContentValues[number_of_movies_in_page];
 
         //iterate over array and get each movie in order
-        for (int i = 0; i < number_of_movies; i++) {
+        for (int i = 0; i < number_of_movies_in_page; i++) {
             //current object in array representing movie
             JSONObject movieJSON = moviesJSONArray.getJSONObject(i);
 
@@ -63,9 +59,18 @@ public final class JsonUtils {
             double user_rating = movieJSON.getDouble(TMD_USER_RATING);
             double popularity = movieJSON.getDouble(TMD_POPULARITY);
 
-            Movie currentMovie = new Movie(id, title, posterPath, backdropPath, null, synopsis, null, user_rating, popularity, releaseDate, false);
 
-            movies[i] = currentMovie;
+            ContentValues movieValues = new ContentValues();
+            movieValues.put(MovieEntry.COLUMN_MOVIE_ID, id);
+            movieValues.put(MovieEntry.COLUMN_TITLE, title);
+            movieValues.put(MovieEntry.COLUMN_POSTER_PATH, posterPath);
+            movieValues.put(MovieEntry.COLUMN_BACKDROP_PATH, backdropPath);
+            movieValues.put(MovieEntry.COLUMN_SYNOPSIS, synopsis);
+            movieValues.put(MovieEntry.COLUMN_RELEASE_DATE, releaseDate);
+            movieValues.put(MovieEntry.COLUMN_USER_RATING, user_rating);
+            movieValues.put(MovieEntry.COLUMN_POPULARITY, popularity);
+
+            movies[i] = movieValues;
         }
 
         return movies;

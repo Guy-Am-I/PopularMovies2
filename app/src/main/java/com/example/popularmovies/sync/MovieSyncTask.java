@@ -25,41 +25,37 @@ public class MovieSyncTask {
      */
     synchronized public static void syncMovies(Context context) {
 
-        URL movieRequestPopularUrl = NetworkUtils.getUrlPopular(context);
-        URL movieRequestTopRatedUrl = NetworkUtils.getUrlTopRated(context);
-        ContentValues[] popular_movie_values = getMovieData(context, movieRequestPopularUrl);
-        ContentValues[] top_rated_movie_values = getMovieData(context, movieRequestTopRatedUrl)
-
-        if ((popular_movie_values != null && popular_movie_values.length != 0)
-                || (top_rated_movie_values != null && top_rated_movie_values.length != 0)){
-
-            /* content resolver used to mangage data in db */
-            ContentResolver popularmoviesContentResolver = context.getContentResolver();
-
-            /*delete old data */
-            popularmoviesContentResolver.delete(MovieDbContract.MovieEntry.CONTENT_URI, null, null);
-
-            /* insert newly received values */
-            popularmoviesContentResolver.bulkInsert(MovieDbContract.MovieEntry.CONTENT_URI, popular_movie_values);
-            popularmoviesContentResolver.bulkInsert(MovieDbContract.MovieEntry.CONTENT_URI, top_rated_movie_values);
-
-            //TODO add notification capability per function docstring description
-        }
-    }
-
-    private static ContentValues[] getMovieData(Context context, URL url_query) {
-
         try {
+
+            URL movieRequestPopularUrl = NetworkUtils.getUrlPopular(context);
+            URL movieRequestTopRatedUrl = NetworkUtils.getUrlTopRated(context);
+
             /* get json data */
-            String jsonMovieResponse = NetworkUtils.getResponseFromHttpUrl(url_query);
-            /* parse json data into content values to be cached in our db */
-            ContentValues[] movieValues = JsonUtils.getMoviesFromJSON(context, jsonMovieResponse);
+            String jsonPopular = NetworkUtils.getResponseFromHttpUrl(movieRequestPopularUrl);
+            String jsonTopRated = NetworkUtils.getResponseFromHttpUrl(movieRequestTopRatedUrl);
+            /*parse json into content values to put in DB */
+            ContentValues[] popular_movie_values = JsonUtils.getMoviesFromJSON(context, jsonPopular);
+            ContentValues[] top_rated_movie_values = JsonUtils.getMoviesFromJSON(context, jsonTopRated);
 
-            return movieValues;
 
-        }
-        catch (Exception e){
+            if ((popular_movie_values != null && popular_movie_values.length != 0)
+                    || (top_rated_movie_values != null && top_rated_movie_values.length != 0)) {
+
+                /* content resolver used to mangage data in db */
+                ContentResolver popularmoviesContentResolver = context.getContentResolver();
+
+                /*delete old data */
+                popularmoviesContentResolver.delete(MovieDbContract.MovieEntry.CONTENT_URI, null, null);
+
+                /* insert newly received values */
+                popularmoviesContentResolver.bulkInsert(MovieDbContract.MovieEntry.CONTENT_URI, popular_movie_values);
+                popularmoviesContentResolver.bulkInsert(MovieDbContract.MovieEntry.CONTENT_URI, top_rated_movie_values);
+
+                //TODO add notification capability per function docstring description
+            }
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
+
 }
