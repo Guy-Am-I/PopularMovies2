@@ -10,7 +10,7 @@ public class MovieDbContract {
 
     // Content AUthority is the name for the content provider - i.e. it has to be unique so as to
     // access our content (DB)
-    public static final String CONTENT_AUTHORITY = "com.example.popularmovies";
+    public static final String CONTENT_AUTHORITY = "com.example.popularMovies";
     // This Uri will be used by anyone trying to get data from our app (DB)
     public static final Uri BASE_CONTENT_URI = Uri.parse("content:// " + CONTENT_AUTHORITY);
 

@@ -6,4 +6,6 @@
     <string name="bot_nav_top_rated_label">Top Rated</string>
     <string name="bot_nav_favorites">Favorites</string>
 
+
+    <string name="content_authority">com.example.popularMovies</string>
 </resources>

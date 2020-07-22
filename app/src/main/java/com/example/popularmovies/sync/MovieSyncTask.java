@@ -41,7 +41,7 @@ public class MovieSyncTask {
             if ((popular_movie_values != null && popular_movie_values.length != 0)
                     || (top_rated_movie_values != null && top_rated_movie_values.length != 0)) {
 
-                /* content resolver used to mangage data in db */
+                /* content resolver used to manage data in db */
                 ContentResolver popularmoviesContentResolver = context.getContentResolver();
 
                 /*delete old data */

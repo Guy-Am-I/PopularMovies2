@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -71,10 +72,11 @@ class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapterViewHol
         String posterPath = mCursor.getString(MainActivity.INDEX_MOVIE_POSTER_PATH);
         String title = mCursor.getString(MainActivity.INDEX_MOVIE_TITLE);
         //TODO get imageResource using Picasso
+        holder.movieTitle.setText(title);
 
         //TODO delete once we have set retrieved movie data into the view
         //set movie image for each poster in the view holders
-        holder.moviePoster.setImageResource(R.drawable.ic_launcher_foreground);
+        //holder.moviePoster.setImageResource(R.drawable.ic_launcher_foreground);
     }
 
     /**
@@ -104,12 +106,14 @@ class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapterViewHol
     class MovieAdapterViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         ImageView moviePoster;
+        TextView movieTitle;
 
         MovieAdapterViewHolder(View view) {
             super(view);
 
             //Bind view items
-            moviePoster = (ImageView) view.findViewById(R.id.movie_list_item_IV);
+            //moviePoster = (ImageView) view.findViewById(R.id.movie_list_item_IV);
+            movieTitle = (TextView) view.findViewById(R.id.movie_title_tv);
 
             view.setOnClickListener(this);
         }

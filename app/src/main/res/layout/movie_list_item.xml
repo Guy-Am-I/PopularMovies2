@@ -3,9 +3,16 @@
     android:layout_height="wrap_content"
     android:layout_width="match_parent">
 
+    <!---
     <ImageView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/movie_list_item_IV" />
+        android:id="@+id/movie_list_item_IV" /> -->
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/movie_title_tv"
+        android:textAppearance="@style/TextAppearance.AppCompat.Display1" />
 
 </LinearLayout>

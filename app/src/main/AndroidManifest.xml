@@ -16,6 +16,17 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <!-- Content Provider -->
+        <provider
+            android:authorities="@string/content_authority"
+            android:name=".Data.MovieProvider"
+            android:exported="false" />
+
+        <!-- Intent Service -->
+        <service android:name=".sync.MovieSyncIntentService"
+            android:exported="false" />
+
     </application>
 
     <uses-permission android:name="android.permission.INTERNET" />
