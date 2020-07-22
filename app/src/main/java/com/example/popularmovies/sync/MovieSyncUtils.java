@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 
@@ -64,6 +65,7 @@ public class MovieSyncUtils {
      * @param context Context to be used to start intentService to sync
      */
     public static void startImmediateSync(@NonNull final Context context){
+
         Intent intentToSyncImmediately = new Intent(context, MovieSyncIntentService.class);
         context.startService(intentToSyncImmediately);
     }

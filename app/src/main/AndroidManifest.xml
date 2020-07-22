@@ -20,11 +20,11 @@
         <!-- Content Provider -->
         <provider
             android:authorities="@string/content_authority"
-            android:name=".Data.MovieProvider"
+            android:name="com.example.popularmovies.Data.MovieProvider"
             android:exported="false" />
 
         <!-- Intent Service -->
-        <service android:name=".sync.MovieSyncIntentService"
+        <service android:name="com.example.popularmovies.sync.MovieSyncIntentService"
             android:exported="false" />
 
     </application>

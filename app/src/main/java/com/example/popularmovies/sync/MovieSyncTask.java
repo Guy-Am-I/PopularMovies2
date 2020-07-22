@@ -3,6 +3,7 @@ package com.example.popularmovies.sync;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
+import android.util.Log;
 
 import com.example.popularmovies.Data.MovieDbContract;
 import com.example.popularmovies.Utils.JsonUtils;

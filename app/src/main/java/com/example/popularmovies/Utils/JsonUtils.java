@@ -69,6 +69,8 @@ public final class JsonUtils {
             movieValues.put(MovieEntry.COLUMN_RELEASE_DATE, releaseDate);
             movieValues.put(MovieEntry.COLUMN_USER_RATING, user_rating);
             movieValues.put(MovieEntry.COLUMN_POPULARITY, popularity);
+            //initially not favorite
+            movieValues.put(MovieEntry.COLUMN_IS_FAV, false);
 
             movies[i] = movieValues;
         }

@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 
 
 import com.example.popularmovies.Data.MovieDbContract;
@@ -77,6 +78,7 @@ public class MainActivity extends AppCompatActivity implements
         //TODO initialize data in our app, i.e. fetch movie data from API for popular & top_rated
         MovieSyncUtils.initialize(this);
 
+
     }
 
     /**
@@ -103,7 +105,7 @@ public class MainActivity extends AppCompatActivity implements
                 //get all rows of our movie data
                 Uri movieQueryUri = MovieDbContract.MovieEntry.CONTENT_URI;
                 /* Sort by popularity when app is launched */
-                String sortOrder = MovieDbContract.MovieEntry.COLUMN_POPULARITY + " DSC";
+                String sortOrder = MovieDbContract.MovieEntry.COLUMN_POPULARITY + " DESC";
                 //get all movies (just poster path & title)
                 return new CursorLoader(this,
                         movieQueryUri,

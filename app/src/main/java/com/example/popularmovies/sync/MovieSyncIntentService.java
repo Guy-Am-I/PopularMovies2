@@ -2,6 +2,7 @@ package com.example.popularmovies.sync;
 
 import android.app.IntentService;
 import android.content.Intent;
+import android.util.Log;
 
 import androidx.annotation.Nullable;
 
@@ -24,5 +25,6 @@ public class MovieSyncIntentService extends IntentService {
     @Override
     protected void onHandleIntent(@Nullable Intent intent) {
         MovieSyncTask.syncMovies(this);
+
     }
 }
