@@ -13,7 +13,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
-import android.util.Log;
 
 
 import com.example.popularmovies.Data.MovieDbContract;
@@ -83,7 +82,7 @@ public class MainActivity extends AppCompatActivity implements
      */
     @Override
     public void onClick(int movie_id) {
-
+        //Start Movie_Detail_Activity, passing it our movie_id so it can fetch relevant data
     }
     //TODO save info onSavedInstanceState when device is rotated
 
