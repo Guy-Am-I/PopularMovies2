@@ -17,6 +17,7 @@ import android.os.Bundle;
 
 import com.example.popularmovies.Data.MovieDbContract;
 import com.example.popularmovies.databinding.ActivityMainBinding;
+import com.example.popularmovies.sync.MovieSyncUtils;
 
 
 public class MainActivity extends AppCompatActivity implements
@@ -74,6 +75,7 @@ public class MainActivity extends AppCompatActivity implements
         LoaderManager.getInstance(this).initLoader(MOVIE_LOADER_ID, null, this);
 
         //TODO initialize data in our app, i.e. fetch movie data from API for popular & top_rated
+        MovieSyncUtils.initialize(this);
 
     }
 
@@ -138,6 +140,7 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     public void onLoaderReset(@NonNull Loader<Cursor> loader) {
 
-        //TODO notify recycler view adapter that data is unavailavle, i.e we need to clear the data
+        //notify recycler view adapter that data is unavailavle, i.e we need to clear the data
+        movieAdapter.swapCursor(null);
     }
 }
