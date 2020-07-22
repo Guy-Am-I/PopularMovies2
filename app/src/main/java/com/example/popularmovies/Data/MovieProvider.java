@@ -15,6 +15,7 @@ import androidx.annotation.Nullable;
 /* Class that serves as the content provicer for our app's data (only the movie info cached from
  * TheMovieDatabase
  * We use this class for inserting, deleting and query for data
+ * NOTE: this is for learning purposes, in reality the only app to use our data is our own
  */
 public class MovieProvider extends ContentProvider {
 
@@ -100,31 +101,130 @@ public class MovieProvider extends ContentProvider {
     }
 
 
-
+    /**
+     * handle the query action for whoever uses our content provider (database)
+     * @param uri uri to query
+     * @param projection list of columns we are looking for (null = all cols)
+     * @param selection argument to apply if filtering rows (null = all rows)
+     * @param selectionArgs if passing arguments in selection filter (each ? is substituted for relative arg
+     * @param sortOrder how the rows should be sorted
+     * @return a cursor pointing to first entry in the results (if null either error or no matching results)
+     */
     @Nullable
     @Override
-    public Cursor query(@NonNull Uri uri, @Nullable String[] projection, @Nullable String selection, @Nullable String[] selectionArgs, @Nullable String sortOrder, @Nullable CancellationSignal cancellationSignal) {
-        return super.query(uri, projection, selection, selectionArgs, sortOrder, cancellationSignal);
+    public Cursor query(@NonNull Uri uri, @Nullable String[] projection, @Nullable String selection, @Nullable String[] selectionArgs, @Nullable String sortOrder) {
+
+        Cursor cursor;
+        //determine what kind of query is being made (using the uri matcher we created
+        switch (sUriMatcher.match(uri)) {
+            //case when we queried for a specific movie by its id
+            case CODE_MOVIE_BY_ID: {
+                //last 'argument' in uri is the id
+                //ex: 'content://com.example.popularmovies/movie/<movie_id>
+                String movie_id = uri.getLastPathSegment();
+
+                //There can be many arguments that are being used to search (select) but in our case it is
+                //only 1 = the movie id (for now)
+                String[] selectionArguments = new String[]{movie_id};
+
+                //get relevant data from database
+                cursor = mOpenHelper.getReadableDatabase().query(
+                        MovieDbContract.MovieEntry.TABLE_NAME,
+                        /*
+                         * projection is the list of columns (i.e movie data we want returned)
+                         */
+                        projection,
+                        MovieDbContract.MovieEntry.COLUMN_MOVIE_ID + " = ? ",
+                        selectionArguments,
+                        null,
+                        null,
+                        sortOrder);
+                break;
+            }
+
+            /*in the case when we did not query for a specific movie, i.e we want all the movies in
+             * the database returned */
+            case CODE_MOVIE: {
+                cursor = mOpenHelper.getReadableDatabase().query(
+                        MovieDbContract.MovieEntry.TABLE_NAME,
+                        projection,
+                        selection,
+                        selectionArgs,
+                        null,
+                        null,
+                        sortOrder);
+                break;
+            }
+
+            default:
+                //failed to get correct code from uri matcher = uri was incorrctly built
+                throw new UnsupportedOperationException("Unknown URI: " + uri);
+        }
+
+        cursor.setNotificationUri(getContext().getContentResolver(), uri);
+        return cursor;
     }
 
+    /**
+     * Delete a movie (data) at given uri
+     * @param uri uri to query (where we delete)
+     * @param selection optional parameters to specify what we will be deleting (rows)
+     * @param selectionArgs used with selection to pass arguments into the string
+     * @return number of rows deleted
+     */
     @Override
     public int delete(@NonNull Uri uri, @Nullable String selection, @Nullable String[] selectionArgs) {
-        return 0;
+
+        int rows_deleted = 0;
+
+        //passing null will delete all rows in DB
+        //in order to know how many rows were deleted we pass "1" whcih returns that number
+        //per SQLiteDatabase doc
+        if (selection == null) selection = "1";
+
+        switch (sUriMatcher.match(uri)) {
+
+            case CODE_MOVIE:
+                rows_deleted = mOpenHelper.getWritableDatabase().delete(
+                        MovieDbContract.MovieEntry.TABLE_NAME,
+                        selection,
+                        selectionArgs
+                );
+                break;
+            default:
+                throw new UnsupportedOperationException("Unknown Uri: " + uri);
+        }
+
+        if (rows_deleted != 0) {
+            //notify chagne in DB when we delete data from it to content resolver which handles comm with users
+            getContext().getContentResolver().notifyChange(uri, null);
+        }
+         return rows_deleted;
     }
 
+    /**
+     * Returns the type of given data at uri
+     * @param uri URI to query
+     * @return a MIME type string or null if there is not type
+     * NOTE: for now there is no complex data (like image, audio, video...) in our databse (only text, numbers) so
+     * we do not implement this method
+     */
     @Nullable
     @Override
     public String getType(@NonNull Uri uri) {
-        return null;
+        throw new RuntimeException("NO MIME TYPE IN POPULAR MOVIES");
     }
 
+    //method to update certain rows of database
+    //since our data is only cached from online API we do not update it (perhaps get data again and insert anew)
     @Override
     public int update(@NonNull Uri uri, @Nullable ContentValues values, @Nullable String selection, @Nullable String[] selectionArgs) {
-        return 0;
+        throw new RuntimeException("No update implementation, requery data from API and bulkInsert instead");
     }
 
+    @Nullable
     @Override
-    public void shutdown() {
-        super.shutdown();
+    public Uri insert(@NonNull Uri uri, @Nullable ContentValues values) {
+        throw new RuntimeException("No insert implementation, use bulkInsert instead if needed");
     }
 }
