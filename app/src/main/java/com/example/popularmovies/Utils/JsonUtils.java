@@ -70,7 +70,7 @@ public final class JsonUtils {
             movieValues.put(MovieEntry.COLUMN_USER_RATING, user_rating);
             movieValues.put(MovieEntry.COLUMN_POPULARITY, popularity);
             //initially not favorite
-            movieValues.put(MovieEntry.COLUMN_IS_FAV, false);
+            movieValues.put(MovieEntry.COLUMN_IS_FAV, 0); //0 = false, 1 = true
 
             movies[i] = movieValues;
         }

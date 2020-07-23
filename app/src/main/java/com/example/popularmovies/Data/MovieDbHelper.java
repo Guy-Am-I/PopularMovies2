@@ -27,15 +27,15 @@ public class MovieDbHelper extends SQLiteOpenHelper {
 
         final String SQL_CREATE_MOVIES_TABLE =
         "CREATE TABLE " + MovieEntry.TABLE_NAME + " (" +
-                MovieEntry._ID      + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                MovieEntry.COLUMN_MOVIE_ID + " INTEGER NOT NULL, "   +
+                //MovieEntry._ID      + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                MovieEntry.COLUMN_MOVIE_ID + " INTEGER PRIMARY KEY NOT NULL, "   +
                 MovieEntry.COLUMN_TITLE + " TEXT NOT NULL, " +
                 MovieEntry.COLUMN_POSTER_PATH + " TEXT NOT NULL, " +
                 MovieEntry.COLUMN_BACKDROP_PATH  + " TEXT NOT NULL, " +
                 MovieEntry.COLUMN_SYNOPSIS + " TEXT NOT NULL, " +
                 MovieEntry.COLUMN_USER_RATING + " REAL NOT NULL, " +
                 MovieEntry.COLUMN_POPULARITY + " REAL NOT NULL, " +
-                MovieEntry.COLUMN_RELEASE_DATE + " TEXT NOT NULL, " +
+                MovieEntry.COLUMN_RELEASE_DATE + " NUMERIC NOT NULL, " +
                 MovieEntry.COLUMN_IS_FAV + " INTEGER NOT NULL, " +
 
                 //a movie id is unique to each movie hence the UNIQUE tag

@@ -7,23 +7,26 @@ import androidx.databinding.DataBindingUtil;
 import androidx.loader.app.LoaderManager;
 import androidx.loader.content.CursorLoader;
 import androidx.loader.content.Loader;
-import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.MenuItem;
 
 
 import com.example.popularmovies.Data.MovieDbContract;
 import com.example.popularmovies.databinding.ActivityMainBinding;
 import com.example.popularmovies.sync.MovieSyncUtils;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 
 public class MainActivity extends AppCompatActivity implements
         MovieAdapter.MovieAdapterOnClickHandler,
-        LoaderManager.LoaderCallbacks<Cursor> {
+        LoaderManager.LoaderCallbacks<Cursor>,
+        BottomNavigationView.OnNavigationItemSelectedListener {
 
     private final String TAG = MainActivity.class.getSimpleName();
 
@@ -51,6 +54,7 @@ public class MainActivity extends AppCompatActivity implements
     private int mPosition = RecyclerView.NO_POSITION;
     private RecyclerView moviePostersRv;
     private MovieAdapter movieAdapter;
+    private BottomNavigationView bot_nav;
 
     ActivityMainBinding mBinding;
     @Override
@@ -60,25 +64,29 @@ public class MainActivity extends AppCompatActivity implements
 
         mBinding = DataBindingUtil.setContentView(this, R.layout.activity_main);
         moviePostersRv = mBinding.moviesRecyclerView;
+        bot_nav = mBinding.botNav;
+
 
         //Recycler View Initialization
-        LinearLayoutManager moviePostersRvLayoutManager = new LinearLayoutManager(this, RecyclerView.VERTICAL, false);
+        GridLayoutManager moviePostersGridManager = new GridLayoutManager(this, 2, RecyclerView.VERTICAL, false);
+        moviePostersRv.setLayoutManager(moviePostersGridManager);
 
-        moviePostersRv.setLayoutManager(moviePostersRvLayoutManager);
         moviePostersRv.setHasFixedSize(true);
 
         //Tie Adapter
         movieAdapter = new MovieAdapter(this, this);
         moviePostersRv.setAdapter(movieAdapter);
 
+
         //TODO switch to onLoading view until we get the data
         //initialize loader with our id, and this activity (mainActivity) as the callback handler
         LoaderManager.getInstance(this).initLoader(MOVIE_LOADER_ID, null, this);
 
-        //TODO initialize data in our app, i.e. fetch movie data from API for popular & top_rated
+
         MovieSyncUtils.initialize(this);
 
-
+        //set navigation listenr
+        bot_nav.setOnNavigationItemSelectedListener(this);
     }
 
     /**
@@ -90,32 +98,47 @@ public class MainActivity extends AppCompatActivity implements
     }
     //TODO save info onSavedInstanceState when device is rotated
 
-
     /**
      * Gets called by LoaderManager when new loader is created
      * @param id LoaderId for the loader that is being created
-     * @param args any argumenets given to loader at initialization
+     * @param args any argumenets given to loader before loading
      * @return A newly created loader instance
      */
     @NonNull
     @Override
     public Loader<Cursor> onCreateLoader(int id, @Nullable Bundle args) {
+        Log.d(TAG, "Loadig: ");
+        //get all rows of our movie data
+        Uri movieQueryUri = MovieDbContract.MovieEntry.CONTENT_URI;;
+
+        String selection = null;
+        String[] selectionArgs = null;
+        String sortOrder;
+
         switch (id) {
             case MOVIE_LOADER_ID:
-                //get all rows of our movie data
-                Uri movieQueryUri = MovieDbContract.MovieEntry.CONTENT_URI;
-                /* Sort by popularity when app is launched */
-                String sortOrder = MovieDbContract.MovieEntry.COLUMN_POPULARITY + " DESC";
-                //get all movies (just poster path & title)
-                return new CursorLoader(this,
-                        movieQueryUri,
-                        MAIN_MOVIE_PROJECTION,
-                        null,
-                        null,
-                        sortOrder);
+                if (args == null) {
+                    Log.d(TAG, "no args");
+                    /* Sort by popularity when app is launched */
+                    sortOrder = MovieDbContract.MovieEntry.COLUMN_POPULARITY + " DESC";
+                }
+                else {
+                    Log.d(TAG, "received BUNDLE ARGS");
+                    selection = args.getString("selection");
+                    selectionArgs = args.getStringArray("selectionArgs");
+                    sortOrder = args.getString("sortOrder");
+                }
+                break;
             default:
                 throw new RuntimeException("Issue creating loader: " + id);
         }
+        //get all movies (just poster path & title)
+        return new CursorLoader(this,
+                movieQueryUri,
+                MAIN_MOVIE_PROJECTION,
+                selection,
+                selectionArgs,
+                sortOrder);
     }
 
     /**
@@ -144,5 +167,51 @@ public class MainActivity extends AppCompatActivity implements
 
         //notify recycler view adapter that data is unavailavle, i.e we need to clear the data
         movieAdapter.swapCursor(null);
+    }
+
+    /**
+     * Perform different action based on what item was clicked
+     * @param item Choice in bot nav view (popular, favorites, top_rated)
+     */
+    @Override
+    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+        Uri movieQueryUri = MovieDbContract.MovieEntry.CONTENT_URI;
+        String selection = null;
+        String[] selectionArgs = null;
+        String sortOrder = null;
+
+        switch(item.getItemId()) {
+            case R.id.bot_nav_popular:
+                Log.d(TAG, "nav bar popular");
+                //get sorted data by popularity in DB
+                sortOrder = MovieDbContract.MovieEntry.COLUMN_POPULARITY + " DESC";
+                break;
+            case R.id.bot_nav_top_rated:
+                Log.d(TAG, "nav bar rated");
+                //get sorted data by rating in DB
+                sortOrder = MovieDbContract.MovieEntry.COLUMN_USER_RATING + " DESC";
+                break;
+            case R.id.bot_nav_favorites:
+                Log.d(TAG, "nav bar fav");
+                //get all data that are favorited in DB
+                selection = "? == 1";
+                selectionArgs = new String[1];
+                selectionArgs[0] = MovieDbContract.MovieEntry.COLUMN_IS_FAV;
+                break;
+            //should never reach here!!
+            default:
+                throw new UnsupportedOperationException("Error getting id bot_nav clicked");
+        }
+
+        //build our bundle to pass onto create loader
+        Bundle query_data = new Bundle();
+        query_data.putParcelable("Uri", movieQueryUri);
+        query_data.putString("selection", selection);
+        query_data.putStringArray("selectionArgs", selectionArgs);
+        query_data.putString("sortOrder", sortOrder);
+
+        LoaderManager.getInstance(this).restartLoader(MOVIE_LOADER_ID, query_data, this);
+        return true;
+
     }
 }

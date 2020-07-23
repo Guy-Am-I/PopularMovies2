@@ -173,7 +173,7 @@ public class MovieProvider extends ContentProvider {
     @Override
     public int delete(@NonNull Uri uri, @Nullable String selection, @Nullable String[] selectionArgs) {
 
-        int rows_deleted = 0;
+        int rows_deleted;
 
         //passing null will delete all rows in DB
         //in order to know how many rows were deleted we pass "1" whcih returns that number

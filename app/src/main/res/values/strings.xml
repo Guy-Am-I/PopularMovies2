@@ -8,4 +8,7 @@
 
 
     <string name="content_authority">com.example.popularmovies</string>
+
+    <!-- List/Grid Main Movies View -->
+    <string name="poster_image_description">Movie Poster</string>
 </resources>

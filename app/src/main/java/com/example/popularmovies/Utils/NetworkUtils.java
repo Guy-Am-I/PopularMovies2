@@ -28,6 +28,10 @@ public final class NetworkUtils {
     private static String API_QUERY = "api_key";
 
     private static String BASE_IMAGE_URL = "https://image.tmdb.org/t/p/";
+    public static String GRID_DEFAULT_POSTER_SIZE_PORT = "w500";
+    public static String GRID_DEFAULT_POSTER_SIZE_LAND = "w500";
+    public static String GRID_DEFAULT_POSTER_SIZE_LAND_TABLET = "w780";
+    public static String LIST_DEFAULT_BACKDROP_SIZE = "w300";
 
     /*
      * get API key from resources - for that we need context
@@ -70,7 +74,6 @@ public final class NetworkUtils {
     private static URL createURL(Uri uri) {
         try {
             URL url = new URL(uri.toString());
-            Log.v(TAG, "URL: " + url);
             return url;
         } catch (MalformedURLException e) {
             e.printStackTrace();

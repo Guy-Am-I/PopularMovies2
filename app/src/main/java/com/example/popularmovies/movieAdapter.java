@@ -11,6 +11,11 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.popularmovies.Utils.NetworkUtils;
+import com.squareup.picasso.Picasso;
+
+import java.net.URL;
+
 
 class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapterViewHolder> {
     private final Context mContext;
@@ -71,12 +76,17 @@ class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapterViewHol
 
         String posterPath = mCursor.getString(MainActivity.INDEX_MOVIE_POSTER_PATH);
         String title = mCursor.getString(MainActivity.INDEX_MOVIE_TITLE);
-        //TODO get imageResource using Picasso
-        holder.movieTitle.setText(title);
 
-        //TODO delete once we have set retrieved movie data into the view
-        //set movie image for each poster in the view holders
-        //holder.moviePoster.setImageResource(R.drawable.ic_launcher_foreground);
+        //TODO decide which image to load based on screen size/orientation
+        URL imageURL = NetworkUtils.getUrlImage(mContext, NetworkUtils.GRID_DEFAULT_POSTER_SIZE_PORT, posterPath);
+        holder.movieTitle.setText(title);
+        holder.movieTitle.setVisibility(View.INVISIBLE);
+        Picasso.get().load(imageURL.toExternalForm())
+                .placeholder(R.drawable.ic_sync_black_40dp)
+                .resize(800, 800)
+                .centerInside()
+                .into(holder.moviePoster);
+
     }
 
     /**
@@ -112,7 +122,7 @@ class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapterViewHol
             super(view);
 
             //Bind view items
-            //moviePoster = (ImageView) view.findViewById(R.id.movie_list_item_IV);
+            moviePoster = (ImageView) view.findViewById(R.id.movie_list_item_IV);
             movieTitle = (TextView) view.findViewById(R.id.movie_title_tv);
 
             view.setOnClickListener(this);

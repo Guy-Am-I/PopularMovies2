@@ -38,8 +38,8 @@ public class MovieSyncUtils {
                 Uri movieQueryUri = MovieDbContract.MovieEntry.CONTENT_URI;
 
                 /* we query to check if empty (no need for data so we are fine with just getting
-                 the id column for rows */
-                String[] projection = {MovieDbContract.MovieEntry._ID};
+                 the id */
+                String[] projection = {MovieDbContract.MovieEntry.COLUMN_MOVIE_ID};
 
                 Cursor cursor = context.getContentResolver().query(
                         movieQueryUri,
