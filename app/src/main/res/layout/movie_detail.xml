@@ -1,111 +1,114 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
-
-    <!-- Guideline for showing main backdrop image and rest of data in 1:2 ratio-->
-    <androidx.constraintlayout.widget.Guideline
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/vertical_third"
-        android:orientation="horizontal"
-        app:layout_constraintGuide_percent="0.33" />
-
-    <!-- Main image (backdrop poster) for the view -->
-    <!-- TODO make it a flexible (collapsing) image when scrolling down -->
-    <ImageView
-        android:id="@+id/movie_detail_backdrop"
-        android:layout_height="wrap_content"
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/vertical_third"
-        app:layout_constraintRight_toRightOf="parent"/>
+        android:layout_height="match_parent">
 
-    <androidx.core.widget.NestedScrollView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@id/vertical_third">
-        <!-- Secondary Movie image (poster) to show -->
+        <!-- Guideline for showing main backdrop image and rest of data in 1:2 ratio-->
+        <androidx.constraintlayout.widget.Guideline
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/vertical_third"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_percent="0.33" />
+
+        <!-- Main image (backdrop poster) for the view -->
+        <!-- TODO make it a flexible (collapsing) image when scrolling down -->
         <ImageView
-            android:id="@+id/movie_detail_poster"
+            android:id="@+id/movie_detail_backdrop"
             android:layout_height="wrap_content"
-            android:layout_width="wrap_content"
-            app:layout_constraintTop_toBottomOf="@id/vertical_third"
+            android:layout_width="match_parent"
+            app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
-            android:layout_marginStart="20dp" />
+            app:layout_constraintBottom_toTopOf="@id/vertical_third"
+            app:layout_constraintRight_toRightOf="parent"/>
 
-        <!-- Section showing synopsis, rating , release date -->
-        <TextView
-            android:layout_height="wrap_content"
-            android:layout_width="wrap_content"
-            android:id="@+id/movie_detail_synopsis"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/vertical_third"
-            app:layout_constraintLeft_toRightOf="@id/movie_detail_poster"
-            android:textAppearance="@style/TextAppearance.AppCompat.Display3" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/movie_detail_release_date"
-            app:layout_constraintRight_toRightOf="@id/movie_detail_synopsis"
-            app:layout_constraintTop_toBottomOf="@id/movie_detail_synopsis"
-            android:textAppearance="@style/TextAppearance.AppCompat.Caption" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/movie_detail_rating"
-            android:textAppearance="@style/TextAppearance.AppCompat.Caption"
-            app:layout_constraintTop_toTopOf="@id/movie_detail_release_date"
-            app:layout_constraintRight_toLeftOf="@id/movie_detail_release_date" />
-
-
-        <!-- section showing clips (trailers) relating to movie -->
-        <!-- TODO add horizontal scroll view/recycle view to show videos -->
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/movie_detail_videos_label"
-            android:text="Videos"
-            android:layout_marginTop="16dp"
-            android:textAppearance="@style/TextAppearance.AppCompat.Caption"
-            app:layout_constraintTop_toBottomOf="@id/movie_detail_poster"
-            app:layout_constraintLeft_toLeftOf="@id/movie_detail_poster" />
-
-        <view
-            android:layout_width="match_parent"
-            android:layout_height="250dp"
-            android:id="@+id/movie_detail_videos"
-            app:layout_constraintLeft_toLeftOf="@id/movie_detail_videos_label"
-            app:layout_constraintRight_toRightOf="@id/movie_detail_rating"
-            app:layout_constraintTop_toBottomOf="@id/movie_detail_videos_label"
-            android:background="@color/colorAccent" />
-
-        <!-- Section showing movie reviews -->
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/movie_detail_reviews_label"
-            android:text="Reviews"
-            android:textAppearance="@style/TextAppearance.AppCompat.Caption"
-            android:layout_marginTop="16dp"
-            app:layout_constraintTop_toBottomOf="@id/movie_detail_videos"
-            app:layout_constraintLeft_toLeftOf="@id/movie_detail_videos_label" />
-
-        <View
+        <androidx.core.widget.NestedScrollView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/movie_detail_reviews"
-            android:background="@color/colorPrimary"
-            android:layout_marginTop="40dp"
-            app:layout_constraintLeft_toLeftOf="@id/movie_detail_reviews_label"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/movie_detail_reviews_label"
-            app:layout_constraintBottom_toBottomOf="parent" />
+            app:layout_constraintTop_toBottomOf="@id/vertical_third">
+            <!-- Secondary Movie image (poster) to show -->
+            <ImageView
+                android:id="@+id/movie_detail_poster"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                app:layout_constraintTop_toBottomOf="@id/vertical_third"
+                app:layout_constraintLeft_toLeftOf="parent"
+                android:layout_marginStart="20dp" />
 
-    </androidx.core.widget.NestedScrollView>
+            <!-- Section showing synopsis, rating , release date -->
+            <TextView
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:id="@+id/movie_detail_synopsis"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/vertical_third"
+                app:layout_constraintLeft_toRightOf="@id/movie_detail_poster"
+                android:textAppearance="@style/TextAppearance.AppCompat.Display3" />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/movie_detail_release_date"
+                app:layout_constraintRight_toRightOf="@id/movie_detail_synopsis"
+                app:layout_constraintTop_toBottomOf="@id/movie_detail_synopsis"
+                android:textAppearance="@style/TextAppearance.AppCompat.Caption" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/movie_detail_rating"
+                android:textAppearance="@style/TextAppearance.AppCompat.Caption"
+                app:layout_constraintTop_toTopOf="@id/movie_detail_release_date"
+                app:layout_constraintRight_toLeftOf="@id/movie_detail_release_date" />
+
+
+            <!-- section showing clips (trailers) relating to movie -->
+            <!-- TODO add horizontal scroll view/recycle view to show videos -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/movie_detail_videos_label"
+                android:text="Videos"
+                android:layout_marginTop="16dp"
+                android:textAppearance="@style/TextAppearance.AppCompat.Caption"
+                app:layout_constraintTop_toBottomOf="@id/movie_detail_poster"
+                app:layout_constraintLeft_toLeftOf="@id/movie_detail_poster" />
+
+            <view
+                android:layout_width="match_parent"
+                android:layout_height="250dp"
+                android:id="@+id/movie_detail_videos"
+                app:layout_constraintLeft_toLeftOf="@id/movie_detail_videos_label"
+                app:layout_constraintRight_toRightOf="@id/movie_detail_rating"
+                app:layout_constraintTop_toBottomOf="@id/movie_detail_videos_label"
+                android:background="@color/colorAccent" />
+
+            <!-- Section showing movie reviews -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/movie_detail_reviews_label"
+                android:text="Reviews"
+                android:textAppearance="@style/TextAppearance.AppCompat.Caption"
+                android:layout_marginTop="16dp"
+                app:layout_constraintTop_toBottomOf="@id/movie_detail_videos"
+                app:layout_constraintLeft_toLeftOf="@id/movie_detail_videos_label" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="200dp"
+                android:id="@+id/movie_detail_reviews"
+                android:background="@color/colorPrimary"
+                android:layout_marginTop="40dp"
+                app:layout_constraintLeft_toLeftOf="@id/movie_detail_reviews_label"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/movie_detail_reviews_label"
+                app:layout_constraintBottom_toBottomOf="parent" />
+
+        </androidx.core.widget.NestedScrollView>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

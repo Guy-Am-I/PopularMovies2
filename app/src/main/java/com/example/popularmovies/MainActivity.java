@@ -10,6 +10,7 @@ import androidx.loader.content.Loader;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -43,6 +44,8 @@ public class MainActivity extends AppCompatActivity implements
             MovieDbContract.MovieEntry.COLUMN_TITLE,
             MovieDbContract.MovieEntry.COLUMN_POSTER_PATH,
     };
+
+
     //Indicies of above array (Make sure they are correct)
     public static final int INDEX_MOVIE_ID = 0;
     public static final int INDEX_MOVIE_TITLE = 1;
@@ -95,6 +98,12 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     public void onClick(int movie_id) {
         //Start Movie_Detail_Activity, passing it our movie_id so it can fetch relevant data
+
+        //create intent
+        Intent goToMovieDetail = new Intent (this, MovieDetailActivity.class);
+        //insert movie details
+        goToMovieDetail.putExtra("id", movie_id);
+        startActivity(goToMovieDetail);
     }
     //TODO save info onSavedInstanceState when device is rotated
 
@@ -110,7 +119,7 @@ public class MainActivity extends AppCompatActivity implements
         Log.d(TAG, "Loadig: ");
         //get all rows of our movie data
         Uri movieQueryUri = MovieDbContract.MovieEntry.CONTENT_URI;;
-
+        String[] projection = MAIN_MOVIE_PROJECTION;
         String selection = null;
         String[] selectionArgs = null;
         String sortOrder;
@@ -124,6 +133,8 @@ public class MainActivity extends AppCompatActivity implements
                 }
                 else {
                     Log.d(TAG, "received BUNDLE ARGS");
+                    movieQueryUri = args.getParcelable("uri");
+                    projection = args.getStringArray("projection");
                     selection = args.getString("selection");
                     selectionArgs = args.getStringArray("selectionArgs");
                     sortOrder = args.getString("sortOrder");
@@ -135,7 +146,7 @@ public class MainActivity extends AppCompatActivity implements
         //get all movies (just poster path & title)
         return new CursorLoader(this,
                 movieQueryUri,
-                MAIN_MOVIE_PROJECTION,
+                projection,
                 selection,
                 selectionArgs,
                 sortOrder);
@@ -206,6 +217,7 @@ public class MainActivity extends AppCompatActivity implements
         //build our bundle to pass onto create loader
         Bundle query_data = new Bundle();
         query_data.putParcelable("Uri", movieQueryUri);
+        query_data.putStringArray("projection", null);
         query_data.putString("selection", selection);
         query_data.putStringArray("selectionArgs", selectionArgs);
         query_data.putString("sortOrder", sortOrder);
