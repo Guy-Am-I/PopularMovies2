@@ -29,9 +29,10 @@ public final class NetworkUtils {
 
     private static String BASE_IMAGE_URL = "https://image.tmdb.org/t/p/";
     public static String GRID_DEFAULT_POSTER_SIZE_PORT = "w500";
+    public static String SMALL_POSTER_SIZE = "w185";
     public static String GRID_DEFAULT_POSTER_SIZE_LAND = "w500";
     public static String GRID_DEFAULT_POSTER_SIZE_LAND_TABLET = "w780";
-    public static String LIST_DEFAULT_BACKDROP_SIZE = "w300";
+    public static String DEFAULT_BACKDROP_SIZE = "original";
 
     /*
      * get API key from resources - for that we need context

@@ -116,7 +116,7 @@ public class MainActivity extends AppCompatActivity implements
     @NonNull
     @Override
     public Loader<Cursor> onCreateLoader(int id, @Nullable Bundle args) {
-        Log.d(TAG, "Loadig: ");
+
         //get all rows of our movie data
         Uri movieQueryUri = MovieDbContract.MovieEntry.CONTENT_URI;;
         String[] projection = MAIN_MOVIE_PROJECTION;
@@ -127,12 +127,10 @@ public class MainActivity extends AppCompatActivity implements
         switch (id) {
             case MOVIE_LOADER_ID:
                 if (args == null) {
-                    Log.d(TAG, "no args");
                     /* Sort by popularity when app is launched */
                     sortOrder = MovieDbContract.MovieEntry.COLUMN_POPULARITY + " DESC";
                 }
                 else {
-                    Log.d(TAG, "received BUNDLE ARGS");
                     movieQueryUri = args.getParcelable("uri");
                     projection = args.getStringArray("projection");
                     selection = args.getString("selection");
@@ -193,17 +191,14 @@ public class MainActivity extends AppCompatActivity implements
 
         switch(item.getItemId()) {
             case R.id.bot_nav_popular:
-                Log.d(TAG, "nav bar popular");
                 //get sorted data by popularity in DB
                 sortOrder = MovieDbContract.MovieEntry.COLUMN_POPULARITY + " DESC";
                 break;
             case R.id.bot_nav_top_rated:
-                Log.d(TAG, "nav bar rated");
                 //get sorted data by rating in DB
                 sortOrder = MovieDbContract.MovieEntry.COLUMN_USER_RATING + " DESC";
                 break;
             case R.id.bot_nav_favorites:
-                Log.d(TAG, "nav bar fav");
                 //get all data that are favorited in DB
                 selection = "? == 1";
                 selectionArgs = new String[1];
@@ -216,8 +211,8 @@ public class MainActivity extends AppCompatActivity implements
 
         //build our bundle to pass onto create loader
         Bundle query_data = new Bundle();
-        query_data.putParcelable("Uri", movieQueryUri);
-        query_data.putStringArray("projection", null);
+        query_data.putParcelable("uri", movieQueryUri);
+        query_data.putStringArray("projection", MAIN_MOVIE_PROJECTION);
         query_data.putString("selection", selection);
         query_data.putStringArray("selectionArgs", selectionArgs);
         query_data.putString("sortOrder", sortOrder);

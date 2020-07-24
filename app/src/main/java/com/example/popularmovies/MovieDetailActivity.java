@@ -2,9 +2,11 @@ package com.example.popularmovies;
 
 import android.content.Intent;
 import android.database.Cursor;
+import android.media.Image;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -16,7 +18,12 @@ import androidx.loader.content.Loader;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.popularmovies.Data.MovieDbContract;
+import com.example.popularmovies.Utils.JsonUtils;
+import com.example.popularmovies.Utils.NetworkUtils;
 import com.example.popularmovies.databinding.MovieDetailBinding;
+import com.squareup.picasso.Picasso;
+
+import java.net.URL;
 
 public class MovieDetailActivity extends AppCompatActivity implements
         LoaderManager.LoaderCallbacks<Cursor>{
@@ -34,6 +41,16 @@ public class MovieDetailActivity extends AppCompatActivity implements
             MovieDbContract.MovieEntry.COLUMN_RELEASE_DATE,
             //get videos & reviews...?
     };
+
+    private static final int INDEX_MOVIE_ID = 0;
+    private static final int INDEX_POSTER_PATH = 1;
+    private static final int INDEX_BACKDROP_PATH = 2;
+    private static final int INDEX_SYNOPSIS = 3;
+    private static final int INDEX_USER_RATING = 4;
+    private static final int INDEX_RELEASE_DATE = 5;
+
+
+
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -91,6 +108,35 @@ public class MovieDetailActivity extends AppCompatActivity implements
     @Override
     public void onLoadFinished(@NonNull Loader<Cursor> loader, Cursor data) {
         //bind data to the UI
+        data.moveToPosition(0); //only 1 row for this movie
+        //Backdrop Poster
+        ImageView backdropPoster = mDetailBinding.movieDetailBackdrop;
+        String path = data.getString(INDEX_BACKDROP_PATH);
+        URL imageURL = NetworkUtils.getUrlImage(this, NetworkUtils.DEFAULT_BACKDROP_SIZE,  path);
+        Picasso.get().load(imageURL.toExternalForm())
+                .placeholder(R.drawable.ic_sync_black_40dp)
+                .into(backdropPoster);
+
+        //Main Movie Poster
+        ImageView mainPoster = mDetailBinding.movieDetailPoster;
+        String posterPath = data.getString(INDEX_POSTER_PATH);
+        URL posterURL = NetworkUtils.getUrlImage(this, NetworkUtils.SMALL_POSTER_SIZE, posterPath);
+        Picasso.get().load(posterURL.toExternalForm())
+                .placeholder(R.drawable.ic_sync_black_40dp)
+                .resize(70, 90)
+                .centerInside()
+                .into(mainPoster);
+
+        //rating
+        String user_rating = data.getString(INDEX_USER_RATING);
+        mDetailBinding.movieDetailRating.setText(user_rating);
+        //release date
+        mDetailBinding.movieDetailReleaseDate.setText(data.getString(INDEX_RELEASE_DATE));
+        //synopsis
+        mDetailBinding.movieDetailSynopsis.setText(data.getString(INDEX_SYNOPSIS));
+
+        //TODO videos + user reviews
+
     }
 
     /**
