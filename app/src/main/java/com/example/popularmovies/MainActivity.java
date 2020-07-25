@@ -200,9 +200,7 @@ public class MainActivity extends AppCompatActivity implements
                 break;
             case R.id.bot_nav_favorites:
                 //get all data that are favorited in DB
-                selection = "? == 1";
-                selectionArgs = new String[1];
-                selectionArgs[0] = MovieDbContract.MovieEntry.COLUMN_IS_FAV;
+                selection = MovieDbContract.MovieEntry.COLUMN_IS_FAV + " = 1 ";
                 break;
             //should never reach here!!
             default:

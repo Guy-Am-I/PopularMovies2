@@ -6,6 +6,7 @@ import android.content.UriMatcher;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -213,11 +214,45 @@ public class MovieProvider extends ContentProvider {
         throw new RuntimeException("NO MIME TYPE IN POPULAR MOVIES");
     }
 
-    //method to update certain rows of database
-    //since our data is only cached from online API we do not update it (perhaps get data again and insert anew)
+
+    /**
+     * update selected rows in database with given values
+     * @param uri = URI to query
+     * @param values new values to put into the database
+     * @param selection selection to decide specifically what data to update
+     * @param selectionArgs variable values to put into selection
+     * @return
+     */
     @Override
     public int update(@NonNull Uri uri, @Nullable ContentValues values, @Nullable String selection, @Nullable String[] selectionArgs) {
-        throw new RuntimeException("No update implementation, requery data from API and bulkInsert instead");
+
+        int rows_updated;
+
+        switch (sUriMatcher.match(uri)) {
+            case CODE_MOVIE_BY_ID:
+
+                //last 'argument' in uri is the id
+                //ex: 'content://com.example.popularmovies/movie/<movie_id>
+                String movie_id = uri.getLastPathSegment();
+
+                String[] selectionArgumentss = new String[]{movie_id};
+
+                rows_updated = mOpenHelper.getWritableDatabase().update(
+                        MovieDbContract.MovieEntry.TABLE_NAME,
+                        values,
+                        MovieDbContract.MovieEntry.COLUMN_MOVIE_ID + " = ?",
+                        selectionArgumentss);
+                break;
+            default:
+                throw new UnsupportedOperationException("Unknown Uri: " + uri);
+        }
+
+        if (rows_updated != 0) {
+            getContext().getContentResolver().notifyChange(uri, null);
+        }
+        Log.d("PROVIDER", "ROWS UPDATED: " + rows_updated);
+
+        return rows_updated;
     }
 
     @Nullable
