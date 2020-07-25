@@ -23,9 +23,11 @@ public final class NetworkUtils {
     private final static String TAG = NetworkUtils.class.getSimpleName();
 
     private static String BASE_MOVIE_URL = "https://api.themoviedb.org/3/movie/";
+    private static String MOVIE_REVIEWS_QUERY = "reviews";
     private static String TOP_RATED_QUERY = "top_rated";
     private static String POPULAR_QUERY = "popular";
     private static String API_QUERY = "api_key";
+    private static String MOVIE_VIDEOS_QUERY = "videos";
 
     private static String BASE_IMAGE_URL = "https://image.tmdb.org/t/p/";
     public static String GRID_DEFAULT_POSTER_SIZE_PORT = "w500";
@@ -66,6 +68,21 @@ public final class NetworkUtils {
         Uri imageQueryUri = Uri.parse(imagePath).buildUpon().build();
 
         return imageQueryUri;
+    }
+
+    private static Uri buildUriMovieReviews(int movie_id) {
+        String reviews_path = BASE_MOVIE_URL + movie_id + "/" + MOVIE_REVIEWS_QUERY;
+        Uri movieReviewsUri = Uri.parse(reviews_path).buildUpon()
+                .appendQueryParameter(API_QUERY, API_KEY)
+                .build();
+        return movieReviewsUri;
+    }
+    private static Uri buildUriMovieVideos(int movie_id) {
+        String videos_path = BASE_MOVIE_URL + movie_id + "/" + MOVIE_VIDEOS_QUERY;
+        Uri moviesVideosUri = Uri.parse(videos_path).buildUpon()
+                .appendQueryParameter(API_QUERY, API_KEY)
+                .build();
+        return moviesVideosUri;
     }
 
     /*
@@ -112,6 +129,30 @@ public final class NetworkUtils {
         API_KEY = getApiKey(context);
         Uri imageQueryUri = buildImageUri(file_size, file_path);
         return createURL(imageQueryUri);
+    }
+
+    /**
+     * get url to query for movie reviews
+     * @param context to get access to resource vals
+     * @param movie_id id of movie which we want reviews from
+     * @return
+     */
+    public static URL getUrlMovieReviews(Context context, int movie_id) {
+        API_KEY = getApiKey(context);
+        Uri movieReviewsUri = buildUriMovieReviews(movie_id);
+        return createURL(movieReviewsUri);
+    }
+
+    /**
+     * get url to query for movie videos (clips/trailers...)
+     * @param context to get access to resource val
+     * @param movie_id id of movie we want videos from
+     * @return
+     */
+    public static URL getUrlMovieVideos(Context context, int movie_id) {
+        API_KEY = getApiKey(context);
+        Uri movieVideos = buildUriMovieVideos(movie_id);
+        return createURL(movieVideos);
     }
 
 

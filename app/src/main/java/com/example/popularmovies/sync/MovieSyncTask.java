@@ -35,8 +35,8 @@ public class MovieSyncTask {
             String jsonPopular = NetworkUtils.getResponseFromHttpUrl(movieRequestPopularUrl);
             String jsonTopRated = NetworkUtils.getResponseFromHttpUrl(movieRequestTopRatedUrl);
             /*parse json into content values to put in DB */
-            ContentValues[] popular_movie_values = JsonUtils.getMoviesFromJSON(context, jsonPopular);
-            ContentValues[] top_rated_movie_values = JsonUtils.getMoviesFromJSON(context, jsonTopRated);
+            ContentValues[] popular_movie_values = JsonUtils.getMoviesFromJSON(jsonPopular);
+            ContentValues[] top_rated_movie_values = JsonUtils.getMoviesFromJSON(jsonTopRated);
 
 
             if ((popular_movie_values != null && popular_movie_values.length != 0)
@@ -58,5 +58,6 @@ public class MovieSyncTask {
             e.printStackTrace();
         }
     }
+
 
 }

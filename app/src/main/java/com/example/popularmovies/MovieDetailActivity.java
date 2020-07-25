@@ -1,9 +1,11 @@
 package com.example.popularmovies;
 
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.media.Image;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.ImageView;
@@ -17,6 +19,7 @@ import androidx.loader.content.CursorLoader;
 import androidx.loader.content.Loader;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.popularmovies.Data.ExtraMovieData;
 import com.example.popularmovies.Data.MovieDbContract;
 import com.example.popularmovies.Utils.JsonUtils;
 import com.example.popularmovies.Utils.NetworkUtils;
@@ -26,14 +29,15 @@ import com.squareup.picasso.Picasso;
 import java.net.URL;
 
 public class MovieDetailActivity extends AppCompatActivity implements
-        LoaderManager.LoaderCallbacks<Cursor>{
+        LoaderManager.LoaderCallbacks<Cursor> {
 
     MovieDetailBinding mDetailBinding;
     public static final int MOVIE_DATA_LOADER_ID = 9999;
+
     private int movie_id;
 
     public static final String[] MOVIE_DATA_PROJECTION = {
-            MovieDbContract.MovieEntry.COLUMN_MOVIE_ID,
+            MovieDbContract.MovieEntry.COLUMN_TITLE,
             MovieDbContract.MovieEntry.COLUMN_POSTER_PATH,
             MovieDbContract.MovieEntry.COLUMN_BACKDROP_PATH,
             MovieDbContract.MovieEntry.COLUMN_SYNOPSIS,
@@ -42,7 +46,7 @@ public class MovieDetailActivity extends AppCompatActivity implements
             //get videos & reviews...?
     };
 
-    private static final int INDEX_MOVIE_ID = 0;
+    private static final int INDEX_MOVIE_TITLE = 0;
     private static final int INDEX_POSTER_PATH = 1;
     private static final int INDEX_BACKDROP_PATH = 2;
     private static final int INDEX_SYNOPSIS = 3;
@@ -58,11 +62,16 @@ public class MovieDetailActivity extends AppCompatActivity implements
 
         mDetailBinding = DataBindingUtil.setContentView(this, R.layout.movie_detail);
 
-
         Intent movie_that_started = getIntent();
         movie_id = movie_that_started.getIntExtra("id", 0);
 
         LoaderManager.getInstance(this).initLoader(MOVIE_DATA_LOADER_ID, null, this);
+
+        //perform network task to get reviews and videos
+        URL videosURL = NetworkUtils.getUrlMovieVideos(this, movie_id);
+        URL reviewsURL = NetworkUtils.getUrlMovieReviews(this, movie_id);
+        new MovieDataAsyncTask().execute(videosURL, reviewsURL);
+
 
     }
 
@@ -127,6 +136,8 @@ public class MovieDetailActivity extends AppCompatActivity implements
                 .centerInside()
                 .into(mainPoster);
 
+        //title
+        mDetailBinding.movieDetailTitle.setText(data.getString(INDEX_MOVIE_TITLE));
         //rating
         String user_rating = data.getString(INDEX_USER_RATING);
         mDetailBinding.movieDetailRating.setText(user_rating);
@@ -135,7 +146,6 @@ public class MovieDetailActivity extends AppCompatActivity implements
         //synopsis
         mDetailBinding.movieDetailSynopsis.setText(data.getString(INDEX_SYNOPSIS));
 
-        //TODO videos + user reviews
 
     }
 
@@ -145,9 +155,53 @@ public class MovieDetailActivity extends AppCompatActivity implements
      */
     @Override
     public void onLoaderReset(@NonNull Loader<Cursor> loader) {
-
         //notify UI that data is unavailavle, i.e we need to clear the data
 
+    }
+
+
+    private class MovieDataAsyncTask extends AsyncTask<URL, Void, ExtraMovieData> {
+        ExtraMovieData movieExtraData;
+
+        @Override
+        protected void onPreExecute() {
+            //TODO show loading progress in videos & reviews Views
+            super.onPreExecute();
+        }
+
+        @Override
+        protected ExtraMovieData doInBackground(URL... params) {
+            try {
+
+                String videos_response = NetworkUtils.getResponseFromHttpUrl(params[0]);
+                String[] video_ids = JsonUtils.getMovieVideosFromJSON(videos_response);
+
+                String reviews_response = NetworkUtils.getResponseFromHttpUrl(params[1]);
+                String[][] review_data = JsonUtils.getMovieReviewsFromJSON(reviews_response);
+
+                movieExtraData = new ExtraMovieData(video_ids, review_data);
+
+            }
+            catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            return movieExtraData;
+        }
+
+        @Override
+        protected void onPostExecute(ExtraMovieData extraMovieData) {
+
+            //TODO update UI here (call appropiate function)
+            //update UI eventually
+            String[] video_ids = extraMovieData.getVideo_ids();
+            String[][] review_data = extraMovieData.getReviews();
+
+            for (int i = 0; i < video_ids.length; i++) { Log.d("DETAIL", "vid_id: " + video_ids[i]); }
+            for (int i = 0; i < review_data.length; i++) {
+                Log.d("DETAIL", "author: " + review_data[i][0] + "  content: " + review_data[i][1]);
+            }
+        }
     }
 
 
