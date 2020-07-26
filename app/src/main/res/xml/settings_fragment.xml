@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<androidx.preference.PreferenceScreen
+    xmlns:android="http://schemas.android.com/apk/res/android">
+    <androidx.preference.SwitchPreferenceCompat
+        android:key="notifications"
+        android:title="Enable Notifications"/>
+    <androidx.preference.Preference
+        android:key="contact"
+        android:title="Send Feedback"
+        android:summary="Report any issues or suggestions for app" />
+
+    <androidx.preference.DropDownPreference
+        android:key="data_sync_time"
+        android:title="How often to sync data with web"
+        android:summary="Choose how much time between each data sync with web" />
+</androidx.preference.PreferenceScreen>

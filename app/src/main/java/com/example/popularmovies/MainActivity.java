@@ -14,7 +14,10 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 
 
@@ -218,5 +221,24 @@ public class MainActivity extends AppCompatActivity implements
         LoaderManager.getInstance(this).restartLoader(MOVIE_LOADER_ID, query_data, this);
         return true;
 
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.top_menu, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        int id = item.getItemId();
+
+        if (id == R.id.menu_go_to_settings) {
+            //go to settings activity
+            startActivity(new Intent(this, SettingsActivity.class));
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 }
