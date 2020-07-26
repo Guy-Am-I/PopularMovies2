@@ -2,13 +2,15 @@
 
 <androidx.preference.PreferenceScreen
     xmlns:android="http://schemas.android.com/apk/res/android">
-    <androidx.preference.SwitchPreferenceCompat
-        android:key="notifications"
-        android:title="Enable Notifications"/>
     <androidx.preference.Preference
-        android:key="contact"
-        android:title="Send Feedback"
-        android:summary="Report any issues or suggestions for app" />
+        android:defaultValue="false"
+        android:key="@string/pref_notifications_key"
+        android:title="@string/pref_notification_title" />
+
+    <androidx.preference.Preference
+        android:key="@string/pref_feedback_key"
+        android:title="@string/pref_feedback_title"
+        android:summary="@string/pref_feedback_summary" />
 
     <androidx.preference.DropDownPreference
         android:key="data_sync_time"

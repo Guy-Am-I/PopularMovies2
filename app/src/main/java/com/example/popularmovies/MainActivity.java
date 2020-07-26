@@ -22,6 +22,7 @@ import android.view.MenuItem;
 
 
 import com.example.popularmovies.Data.MovieDbContract;
+import com.example.popularmovies.Utils.NotificationUtils;
 import com.example.popularmovies.databinding.ActivityMainBinding;
 import com.example.popularmovies.sync.MovieSyncUtils;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -72,6 +73,8 @@ public class MainActivity extends AppCompatActivity implements
         moviePostersRv = mBinding.moviesRecyclerView;
         bot_nav = mBinding.botNav;
 
+        NotificationUtils.createNotificationChannel(this);
+
 
         //Recycler View Initialization
         GridLayoutManager moviePostersGridManager = new GridLayoutManager(this, 2, RecyclerView.VERTICAL, false);
@@ -91,7 +94,7 @@ public class MainActivity extends AppCompatActivity implements
 
         MovieSyncUtils.initialize(this);
 
-        //set navigation listenr
+        //set navigation listener
         bot_nav.setOnNavigationItemSelectedListener(this);
     }
 

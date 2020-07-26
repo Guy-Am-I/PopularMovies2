@@ -5,9 +5,13 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.util.Log;
 
+import androidx.core.app.NotificationManagerCompat;
+
 import com.example.popularmovies.Data.MovieDbContract;
+import com.example.popularmovies.Data.MoviesPreferences;
 import com.example.popularmovies.Utils.JsonUtils;
 import com.example.popularmovies.Utils.NetworkUtils;
+import com.example.popularmovies.Utils.NotificationUtils;
 
 import java.net.URL;
 
@@ -52,7 +56,11 @@ public class MovieSyncTask {
                 popularmoviesContentResolver.bulkInsert(MovieDbContract.MovieEntry.CONTENT_URI, popular_movie_values);
                 popularmoviesContentResolver.bulkInsert(MovieDbContract.MovieEntry.CONTENT_URI, top_rated_movie_values);
 
-                //TODO add notification capability per function docstring description
+                //notify user of new data
+                boolean areNotificationsEnabled = NotificationManagerCompat.from(context).areNotificationsEnabled();
+                if (areNotificationsEnabled) NotificationUtils.notifyUserOfMoviesUpdated(context);
+
+                Log.d("SYNC TASK", "Performed Sync Task");
             }
         } catch (Exception e) {
             e.printStackTrace();

@@ -11,4 +11,17 @@
 
     <!-- List/Grid Main Movies View -->
     <string name="poster_image_description">Movie Poster</string>
+
+    <!-- Preferences Values -->
+    <string name="pref_notifications_key">notifications</string>
+    <string name="pref_notification_title">Enable Notifications</string>
+
+    <string name="pref_feedback_key">feedback</string>
+    <string name="pref_feedback_title">Send Feedback</string>
+    <string name="pref_feedback_summary">Report any issues or suggestions for app</string>
+
+    <!-- NOTIFICATIONS -->
+    <string name="notification_channel_name">Network and Data</string>
+    <string name="notification_channel_desc">Customise whether to be notified of newly cached data</string>
+    <string name="notification_network_title">New Movie Data Now Available!</string>
 </resources>
