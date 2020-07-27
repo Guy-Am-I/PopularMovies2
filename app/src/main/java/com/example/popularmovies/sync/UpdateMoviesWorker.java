@@ -1,23 +1,13 @@
 package com.example.popularmovies.sync;
 
 import android.content.Context;
-import android.os.AsyncTask;
 
 import androidx.annotation.NonNull;
-import androidx.work.ListenableWorker;
 import androidx.work.Worker;
 import androidx.work.WorkerParameters;
 
-import com.google.common.util.concurrent.ListenableFuture;
-
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Executor;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 
 public class UpdateMoviesWorker extends Worker {
-
-    private AsyncTask<Void, Void, Void> mFetchMovieDataTask;
 
     public UpdateMoviesWorker(Context context, WorkerParameters params) {
         super(context, params);

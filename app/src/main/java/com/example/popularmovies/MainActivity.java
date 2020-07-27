@@ -10,6 +10,7 @@ import androidx.loader.content.Loader;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
@@ -26,6 +27,8 @@ import com.example.popularmovies.Utils.NotificationUtils;
 import com.example.popularmovies.databinding.ActivityMainBinding;
 import com.example.popularmovies.sync.MovieSyncUtils;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+
+import java.security.acl.Owner;
 
 
 public class MainActivity extends AppCompatActivity implements
@@ -61,7 +64,7 @@ public class MainActivity extends AppCompatActivity implements
     private int mPosition = RecyclerView.NO_POSITION;
     private RecyclerView moviePostersRv;
     private MovieAdapter movieAdapter;
-    private BottomNavigationView bot_nav;
+    public BottomNavigationView bot_nav;
 
     ActivityMainBinding mBinding;
     @Override
@@ -190,12 +193,15 @@ public class MainActivity extends AppCompatActivity implements
      */
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-        Uri movieQueryUri = MovieDbContract.MovieEntry.CONTENT_URI;
+        refreshDataForChosenNavItem(item.getItemId());
+        return true;
+
+    }
+    public void refreshDataForChosenNavItem(int itemID) {
         String selection = null;
-        String[] selectionArgs = null;
         String sortOrder = null;
 
-        switch(item.getItemId()) {
+        switch(itemID) {
             case R.id.bot_nav_popular:
                 //get sorted data by popularity in DB
                 sortOrder = MovieDbContract.MovieEntry.COLUMN_POPULARITY + " DESC";
@@ -213,18 +219,30 @@ public class MainActivity extends AppCompatActivity implements
                 throw new UnsupportedOperationException("Error getting id bot_nav clicked");
         }
 
-        //build our bundle to pass onto create loader
+        Bundle query_data = createLoaderBundle(selection, null, sortOrder);
+
+        LoaderManager.getInstance(this).restartLoader(MOVIE_LOADER_ID, query_data, this);
+    }
+
+    /**
+     * create a bundle with data to give the cursos which will query the Contetn Provider (SQL),
+     * using main content_uri & MAIN_MOVIE_PROJECTION as defeined in thus class
+     * @param selection
+     * @param selectionArgs
+     * @param sortOrder
+     * @return
+     */
+    public static Bundle createLoaderBundle(String selection, String[] selectionArgs, String sortOrder) {
         Bundle query_data = new Bundle();
-        query_data.putParcelable("uri", movieQueryUri);
+        query_data.putParcelable("uri", MovieDbContract.MovieEntry.CONTENT_URI);
         query_data.putStringArray("projection", MAIN_MOVIE_PROJECTION);
         query_data.putString("selection", selection);
         query_data.putStringArray("selectionArgs", selectionArgs);
         query_data.putString("sortOrder", sortOrder);
 
-        LoaderManager.getInstance(this).restartLoader(MOVIE_LOADER_ID, query_data, this);
-        return true;
-
+        return query_data;
     }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

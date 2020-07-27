@@ -36,12 +36,12 @@ public class MovieDbHelper extends SQLiteOpenHelper {
                 MovieEntry.COLUMN_USER_RATING + " REAL NOT NULL, " +
                 MovieEntry.COLUMN_POPULARITY + " REAL NOT NULL, " +
                 MovieEntry.COLUMN_RELEASE_DATE + " NUMERIC NOT NULL, " +
-                MovieEntry.COLUMN_IS_FAV + " INTEGER NOT NULL, " +
+                MovieEntry.COLUMN_IS_FAV + " INTEGER NOT NULL)";
 
                 //a movie id is unique to each movie hence the UNIQUE tag
                 //in addition we add ON_CONFLICT_REPLACE to replace existing movie if we want to add
                 //another one with the same id
-                " UNIQUE (" + MovieEntry.COLUMN_MOVIE_ID + ") ON CONFLICT REPLACE)";
+                //" UNIQUE (" + MovieEntry.COLUMN_MOVIE_ID + ") ON CONFLICT REPLACE)";
 
         db.execSQL(SQL_CREATE_MOVIES_TABLE);
 
