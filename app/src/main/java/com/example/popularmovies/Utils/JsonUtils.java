@@ -28,6 +28,7 @@ public final class JsonUtils {
     static final String TMD_RELEASE_DATE = "release_date";
     static final String TMD_REVIEW_AUTHOR = "author";
     static final String TMD_REVIEW_CONTENT = "content";
+    static final String TMD_VIDEO_ID = "key";
 
     /**
      * parse JSON string data into Movie objects
@@ -103,7 +104,7 @@ public final class JsonUtils {
 
             JSONObject video_detail = movieVideosJSONArray.getJSONObject(i);
             //only get the video id for now, afterwards we can add more data relating to the video if needed
-            String video_id = video_detail.getString(TMD_ID);
+            String video_id = video_detail.getString(TMD_VIDEO_ID);
 
             videos_id[i] = video_id;
         }

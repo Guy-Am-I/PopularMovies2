@@ -1,5 +1,6 @@
 package com.example.popularmovies;
 
+import android.content.ActivityNotFoundException;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
@@ -40,6 +41,7 @@ public class MovieDetailActivity extends AppCompatActivity implements
     public static final int MOVIE_DATA_LOADER_ID = 9999;
 
     private int movie_id;
+    private String[] movie_video_ids;
 
     public static final String[] MOVIE_DATA_PROJECTION = {
             MovieDbContract.MovieEntry.COLUMN_TITLE,
@@ -157,7 +159,8 @@ public class MovieDetailActivity extends AppCompatActivity implements
         //update favorite
         int isFav = data.getInt(INDEX_IS_FAV);
         movie_fav = isFav;
-        //TODO update floating bar icon to show highlighted (it is a fav)
+
+        updateFloatingButtonIcon();
 
 
     }
@@ -207,12 +210,9 @@ public class MovieDetailActivity extends AppCompatActivity implements
 
             //TODO update UI here (call appropiate function)
             //update UI eventually
-            String[] video_ids = extraMovieData.getVideo_ids();
+            movie_video_ids = extraMovieData.getVideo_ids();
             String[][] review_data = extraMovieData.getReviews();
 
-            for (int i = 0; i < video_ids.length; i++) {
-                Log.d("DETAIL", "vid_id: " + video_ids[i]);
-            }
             for (int i = 0; i < review_data.length; i++) {
                 Log.d("DETAIL", "author: " + review_data[i][0] + "  content: " + review_data[i][1]);
             }
@@ -221,19 +221,60 @@ public class MovieDetailActivity extends AppCompatActivity implements
 
     @Override
     public void onClick(View v) {
-        if (v.getId() == R.id.movie_detail_fav) {
-            //if it was favorite then un-favorite and vice versa
-            movie_fav = movie_fav == 1 ? 0 : 1;
+        switch(v.getId()) {
+            case R.id.movie_detail_fav: {
+                //if it was favorite then un-favorite and vice versa
+                movie_fav = movie_fav == 1 ? 0 : 1;
+                updateFloatingButtonIcon();
 
-            //TODO move databse action so syncTask (not-main thread)
-            Uri movieIdUri = MovieDbContract.MovieEntry.buildMovieUriWithId(movie_id);
-            ContentValues newFavValue = new ContentValues();
-            newFavValue.put(MovieDbContract.MovieEntry.COLUMN_IS_FAV, movie_fav);
+                Uri movieIdUri = MovieDbContract.MovieEntry.buildMovieUriWithId(movie_id);
+                ContentValues newFavValue = new ContentValues();
+                newFavValue.put(MovieDbContract.MovieEntry.COLUMN_IS_FAV, movie_fav);
 
-            ContentResolver movieDataContentResolver = this.getContentResolver();
-            //Update function takes care of updaring only specific movie_id
-            movieDataContentResolver.update(movieIdUri, newFavValue, null, null);
+                ContentResolver movieDataContentResolver = this.getContentResolver();
+                //Update function takes care of updaring only specific movie_id
+                movieDataContentResolver.update(movieIdUri, newFavValue, null, null);
+                break;
+            }
+            case R.id.movie_detail_vid1:
+                watchYoutubeVideo(0);
+                break;
+            case R.id.movie_detail_vid2:
+                watchYoutubeVideo(1);
+                break;
+            case R.id.movie_detail_vid3:
+                watchYoutubeVideo(2);
+                break;
+            default:
+                throw new UnsupportedOperationException("Error clicking button with no action");
         }
+    }
+
+    private void watchYoutubeVideo(int id_index) {
+        int id_array_len = movie_video_ids.length;
+
+        if (id_array_len > id_index) {
+            String vid_id = movie_video_ids[id_index];
+            Intent appIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("vnd.youtube:" + vid_id));
+            Intent webIntent = new Intent(Intent.ACTION_VIEW,
+                    Uri.parse("http://www.youtube.com/watch?v=" + vid_id));
+
+            //open link in either youtube or web depending if app is installed
+            try {
+                startActivity(appIntent);
+            } catch (ActivityNotFoundException ex) {
+                startActivity(webIntent);
+            }
+        }
+        else {
+            Toast.makeText(this, "No video found for movie", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void updateFloatingButtonIcon() {
+        if(movie_fav == 1) {
+            mDetailBinding.movieDetailFav.setImageResource(R.drawable.ic_star_white_24dp);
+        } else mDetailBinding.movieDetailFav.setImageResource(R.drawable.ic_star_border_white_24dp);
     }
 }
 
