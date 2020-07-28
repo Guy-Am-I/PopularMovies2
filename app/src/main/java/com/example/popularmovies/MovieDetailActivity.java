@@ -11,6 +11,8 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.text.Html;
+import android.text.Spanned;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -221,8 +223,11 @@ public class MovieDetailActivity extends AppCompatActivity implements
         if (review_data != null)
         {
             for (int i = 0; i < review_data.length; i++) {
-                String text = "author: " + review_data[i][0] + "\n  Content: " + review_data[i][1] + "\n";
-                all_reviews += text;
+
+                Spanned text = Html.fromHtml("<h1>Author: " + review_data[i][0] + "</h1>"
+                         +"<p>" + review_data[i][1] + "</p> ");
+
+                all_reviews += text.toString();
             }
         }
         mDetailBinding.movieDetailReviews.setText(all_reviews);

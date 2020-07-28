@@ -81,7 +81,7 @@ public class MovieSyncUtils {
 
         //Creating the work Request
         PeriodicWorkRequest request = new PeriodicWorkRequest
-                .Builder(UpdateMoviesWorker.class, 1, TimeUnit.MINUTES)
+                .Builder(UpdateMoviesWorker.class, FETCH_DATA_INTERVAL_HOURS, TimeUnit.HOURS)
                 .setConstraints(constraints)
                 .build();
 

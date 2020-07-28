@@ -9,7 +9,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".MainActivity">
+        <activity android:name=".MainActivity" android:screenOrientation="sensorPortrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -18,11 +18,11 @@
         </activity>
         <!-- Movie Detail Activity -->
         <activity android:name=".MovieDetailActivity" android:theme="@style/AppTheme.NoActionBar"
-            android:parentActivityName=".MainActivity">
+            android:parentActivityName=".MainActivity" android:screenOrientation="sensorPortrait">
 
         </activity>
         <!-- Settings Activity -->
-        <activity android:name=".SettingsActivity" android:theme="@style/AppTheme.NoActionBar">
+        <activity android:name=".SettingsActivity" android:screenOrientation="sensorPortrait">
 
         </activity>
 
