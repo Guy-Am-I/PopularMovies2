@@ -71,7 +71,8 @@ public class MainActivity extends AppCompatActivity implements
         mBinding = DataBindingUtil.setContentView(this, R.layout.activity_main);
         moviePostersRv = mBinding.moviesRecyclerView;
         bot_nav = mBinding.botNav;
-        //setSupportActionBar(mBinding.mainActivityToolbar);
+        setSupportActionBar(mBinding.mainActivityToolbar);
+        //mBinding.mainCollapseToolbar.setTitle("PopularMovies");
 
         NotificationUtils.createNotificationChannel(this);
 
