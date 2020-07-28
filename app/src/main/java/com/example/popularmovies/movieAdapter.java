@@ -77,7 +77,8 @@ class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapterViewHol
         String posterPath = mCursor.getString(MainActivity.INDEX_MOVIE_POSTER_PATH);
         String title = mCursor.getString(MainActivity.INDEX_MOVIE_TITLE);
 
-        //TODO decide which image to load based on screen size/orientation
+        //make sure to change image size based on screen/layout/tablet
+        // if supporting said actions, decide which image to load based on screen size/orientation
         URL imageURL = NetworkUtils.getUrlImage(mContext, NetworkUtils.GRID_DEFAULT_POSTER_SIZE_PORT, posterPath);
         holder.movieTitle.setText(title);
         holder.movieTitle.setVisibility(View.INVISIBLE);

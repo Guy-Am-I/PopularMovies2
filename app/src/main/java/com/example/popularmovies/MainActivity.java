@@ -10,12 +10,10 @@ import androidx.loader.content.Loader;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
-import android.provider.Settings;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -27,9 +25,6 @@ import com.example.popularmovies.Utils.NotificationUtils;
 import com.example.popularmovies.databinding.ActivityMainBinding;
 import com.example.popularmovies.sync.MovieSyncUtils;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-
-import java.security.acl.Owner;
-
 
 public class MainActivity extends AppCompatActivity implements
         MovieAdapter.MovieAdapterOnClickHandler,
@@ -72,9 +67,11 @@ public class MainActivity extends AppCompatActivity implements
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+
         mBinding = DataBindingUtil.setContentView(this, R.layout.activity_main);
         moviePostersRv = mBinding.moviesRecyclerView;
         bot_nav = mBinding.botNav;
+        //setSupportActionBar(mBinding.mainActivityToolbar);
 
         NotificationUtils.createNotificationChannel(this);
 
@@ -90,7 +87,7 @@ public class MainActivity extends AppCompatActivity implements
         moviePostersRv.setAdapter(movieAdapter);
 
 
-        //TODO switch to onLoading view until we get the data
+
         //initialize loader with our id, and this activity (mainActivity) as the callback handler
         LoaderManager.getInstance(this).initLoader(MOVIE_LOADER_ID, null, this);
 
@@ -172,7 +169,7 @@ public class MainActivity extends AppCompatActivity implements
         moviePostersRv.smoothScrollToPosition(mPosition);
 
         if(data.getCount() != 0) {
-            //TODO Show the recycler view with the data to replace the onLoading view
+            //we have data to show, can use loading view while loading and replace it here
         }
     }
 
@@ -250,6 +247,7 @@ public class MainActivity extends AppCompatActivity implements
         inflater.inflate(R.menu.top_menu, menu);
         return super.onCreateOptionsMenu(menu);
     }
+
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {

@@ -3,14 +3,18 @@ package com.example.popularmovies;
 import android.content.ActivityNotFoundException;
 import android.content.ContentResolver;
 import android.content.ContentValues;
-import android.content.Context;
+
 import android.content.Intent;
 import android.database.Cursor;
-import android.media.Image;
+
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.Toast;
@@ -22,26 +26,33 @@ import androidx.databinding.DataBindingUtil;
 import androidx.loader.app.LoaderManager;
 import androidx.loader.content.CursorLoader;
 import androidx.loader.content.Loader;
-import androidx.recyclerview.widget.RecyclerView;
+import androidx.palette.graphics.Palette;
+
 
 import com.example.popularmovies.Data.ExtraMovieData;
 import com.example.popularmovies.Data.MovieDbContract;
 import com.example.popularmovies.Utils.JsonUtils;
 import com.example.popularmovies.Utils.NetworkUtils;
-import com.example.popularmovies.databinding.MovieDetailBinding;
+import com.example.popularmovies.databinding.MovieInfoBinding;
+import com.google.android.material.appbar.AppBarLayout;
 import com.squareup.picasso.Picasso;
+import com.squareup.picasso.RequestCreator;
 
+import java.io.IOException;
 import java.net.URL;
 
 public class MovieDetailActivity extends AppCompatActivity implements
         LoaderManager.LoaderCallbacks<Cursor>, View.OnClickListener {
 
-    MovieDetailBinding mDetailBinding;
+    MovieInfoBinding mDetailBinding;
     private int movie_fav;
+    private boolean appBarExpanded;
+    private Menu collapsedMenu = null;
     public static final int MOVIE_DATA_LOADER_ID = 9999;
 
     private int movie_id;
     private String[] movie_video_ids;
+    private String[][] review_data;
 
     public static final String[] MOVIE_DATA_PROJECTION = {
             MovieDbContract.MovieEntry.COLUMN_TITLE,
@@ -65,12 +76,32 @@ public class MovieDetailActivity extends AppCompatActivity implements
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.movie_info);
 
-        mDetailBinding = DataBindingUtil.setContentView(this, R.layout.movie_detail);
+        mDetailBinding = DataBindingUtil.setContentView(this, R.layout.movie_info);
+        setSupportActionBar(mDetailBinding.animToolbar);
+
+        if(getSupportActionBar() != null) {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        }
 
         Intent movie_that_started = getIntent();
         movie_id = movie_that_started.getIntExtra("id", 0);
         movie_fav = 0; //false
+
+        mDetailBinding.movieDetailAppbar.addOnOffsetChangedListener(new AppBarLayout.OnOffsetChangedListener(){
+            @Override
+            public void onOffsetChanged(AppBarLayout appBarLayout, int verticalOffset) {
+                //vertical offset = 0 means appBar fully expanded
+                if (Math.abs(verticalOffset) > 200) {
+                    appBarExpanded = false;
+                    invalidateOptionsMenu();
+                } else {
+                    appBarExpanded = true;
+                    invalidateOptionsMenu();
+                }
+            }
+        });
 
         LoaderManager.getInstance(this).initLoader(MOVIE_DATA_LOADER_ID, null, this);
 
@@ -79,8 +110,6 @@ public class MovieDetailActivity extends AppCompatActivity implements
         URL reviewsURL = NetworkUtils.getUrlMovieReviews(this, movie_id);
         new MovieDataAsyncTask().execute(videosURL, reviewsURL);
 
-
-        mDetailBinding.movieDetailFav.setOnClickListener(this);
 
 
     }
@@ -130,25 +159,41 @@ public class MovieDetailActivity extends AppCompatActivity implements
         //bind data to the UI
         data.moveToPosition(0); //only 1 row for this movie
         //Backdrop Poster
-        ImageView backdropPoster = mDetailBinding.movieDetailBackdrop;
         String path = data.getString(INDEX_BACKDROP_PATH);
-        URL imageURL = NetworkUtils.getUrlImage(this, NetworkUtils.DEFAULT_BACKDROP_SIZE, path);
-        Picasso.get().load(imageURL.toExternalForm())
-                .placeholder(R.drawable.ic_sync_black_40dp)
-                .into(backdropPoster);
-
-        //Main Movie Poster
-        ImageView mainPoster = mDetailBinding.movieDetailPoster;
         String posterPath = data.getString(INDEX_POSTER_PATH);
-        URL posterURL = NetworkUtils.getUrlImage(this, NetworkUtils.SMALL_POSTER_SIZE, posterPath);
-        Picasso.get().load(posterURL.toExternalForm())
-                .placeholder(R.drawable.ic_sync_black_40dp)
-                .resize(70, 90)
-                .centerInside()
-                .into(mainPoster);
+        final URL imageURL = NetworkUtils.getUrlImage(getApplicationContext(), NetworkUtils.DEFAULT_BACKDROP_SIZE, path);
+        URL posterURL = NetworkUtils.getUrlImage(getApplicationContext(), NetworkUtils.SMALL_POSTER_SIZE, posterPath);
+        loadImagesIntoViews(imageURL, posterURL);
+        /* RequestCreator picasso_data = Picasso.get().load(imageURL.toExternalForm());
+        picasso_data.into(backdropPoster); */
+
+        //mew thread for getting image from web and using pallete API
+        Thread getBitmapThred = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    Bitmap backdropBitmap = Picasso.get().load(imageURL.toExternalForm()).get();
+
+                    Palette.from(backdropBitmap).generate(new Palette.PaletteAsyncListener() {
+                        @Override
+                        public void onGenerated(@Nullable Palette palette) {
+                            int mutedColor = palette.getMutedColor(R.attr.colorPrimary);
+                            mDetailBinding.movieDetailCollapseToolbar.setContentScrimColor(mutedColor);
+                        }
+                    });
+
+                }
+                catch (Exception e){
+                    Log.d("IMAGE RELATED", "Failed to fetch bitmap");
+                    e.printStackTrace();
+                }
+            }
+        });
+        getBitmapThred.start();
 
         //title
-        mDetailBinding.movieDetailTitle.setText(data.getString(INDEX_MOVIE_TITLE));
+        //mDetailBinding.movieDetailTitle.setText(data.getString(INDEX_MOVIE_TITLE));
+        mDetailBinding.movieDetailCollapseToolbar.setTitle(data.getString(INDEX_MOVIE_TITLE));
         //rating
         String user_rating = data.getString(INDEX_USER_RATING);
         mDetailBinding.movieDetailRating.setText(user_rating);
@@ -161,8 +206,26 @@ public class MovieDetailActivity extends AppCompatActivity implements
         movie_fav = isFav;
 
         updateFloatingButtonIcon();
+        //loadReviews();
 
 
+    }
+    public void loadImagesIntoViews(URL backdropURL, URL posterURL) {
+        Picasso.get().load(posterURL.toExternalForm()).into(mDetailBinding.movieDetailPoster);
+
+        Picasso.get().load(backdropURL.toExternalForm()).into(mDetailBinding.movieDetailBackdrop);
+
+    }
+    private void loadReviews() {
+        String all_reviews = "";
+        if (review_data != null)
+        {
+            for (int i = 0; i < review_data.length; i++) {
+                String text = "author: " + review_data[i][0] + "\n  Content: " + review_data[i][1] + "\n";
+                all_reviews += text;
+            }
+        }
+        mDetailBinding.movieDetailReviews.setText(all_reviews);
     }
 
     /**
@@ -179,12 +242,6 @@ public class MovieDetailActivity extends AppCompatActivity implements
 
     private class MovieDataAsyncTask extends AsyncTask<URL, Void, ExtraMovieData> {
         ExtraMovieData movieExtraData;
-
-        @Override
-        protected void onPreExecute() {
-            //TODO show loading progress in videos & reviews Views
-            super.onPreExecute();
-        }
 
         @Override
         protected ExtraMovieData doInBackground(URL... params) {
@@ -208,32 +265,34 @@ public class MovieDetailActivity extends AppCompatActivity implements
         @Override
         protected void onPostExecute(ExtraMovieData extraMovieData) {
 
-            //TODO update UI here (call appropiate function)
             //update UI eventually
             movie_video_ids = extraMovieData.getVideo_ids();
-            String[][] review_data = extraMovieData.getReviews();
+            review_data = extraMovieData.getReviews();
+            loadReviews();
 
-            for (int i = 0; i < review_data.length; i++) {
-                Log.d("DETAIL", "author: " + review_data[i][0] + "  content: " + review_data[i][1]);
-            }
         }
+    }
+
+    private void favoriteClicked()
+    {
+        //if it was favorite then un-favorite and vice versa
+        movie_fav = movie_fav == 1 ? 0 : 1;
+        updateFloatingButtonIcon();
+
+        Uri movieIdUri = MovieDbContract.MovieEntry.buildMovieUriWithId(movie_id);
+        ContentValues newFavValue = new ContentValues();
+        newFavValue.put(MovieDbContract.MovieEntry.COLUMN_IS_FAV, movie_fav);
+
+        ContentResolver movieDataContentResolver = this.getContentResolver();
+        //Update function takes care of updaring only specific movie_id
+        movieDataContentResolver.update(movieIdUri, newFavValue, null, null);
     }
 
     @Override
     public void onClick(View v) {
         switch(v.getId()) {
             case R.id.movie_detail_fav: {
-                //if it was favorite then un-favorite and vice versa
-                movie_fav = movie_fav == 1 ? 0 : 1;
-                updateFloatingButtonIcon();
-
-                Uri movieIdUri = MovieDbContract.MovieEntry.buildMovieUriWithId(movie_id);
-                ContentValues newFavValue = new ContentValues();
-                newFavValue.put(MovieDbContract.MovieEntry.COLUMN_IS_FAV, movie_fav);
-
-                ContentResolver movieDataContentResolver = this.getContentResolver();
-                //Update function takes care of updaring only specific movie_id
-                movieDataContentResolver.update(movieIdUri, newFavValue, null, null);
+                favoriteClicked();
                 break;
             }
             case R.id.movie_detail_vid1:
@@ -275,6 +334,49 @@ public class MovieDetailActivity extends AppCompatActivity implements
         if(movie_fav == 1) {
             mDetailBinding.movieDetailFav.setImageResource(R.drawable.ic_star_white_24dp);
         } else mDetailBinding.movieDetailFav.setImageResource(R.drawable.ic_star_border_white_24dp);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.top_menu, menu);
+        collapsedMenu = menu;
+
+        return true;
+    }
+
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        if (collapsedMenu != null && (!appBarExpanded || collapsedMenu.size() != 1)) {
+
+            collapsedMenu.add("Add").setIcon(mDetailBinding.movieDetailFav.getDrawable())
+                    .setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
+        } else {
+            //full image is expanded so we show default menu
+        }
+
+        return super.onPrepareOptionsMenu(collapsedMenu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        int id = item.getItemId();
+
+        switch (id) {
+            case R.id.menu_go_to_settings:
+                //go to settings activity
+                startActivity(new Intent(this, SettingsActivity.class));
+                return true;
+
+            case R.id.home:
+                finish();
+                return true;
+        }
+        if (item.getTitle() == "Add") {
+            favoriteClicked();
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 }
 

@@ -17,12 +17,12 @@
             </intent-filter>
         </activity>
         <!-- Movie Detail Activity -->
-        <activity android:name=".MovieDetailActivity"
+        <activity android:name=".MovieDetailActivity" android:theme="@style/AppTheme.NoActionBar"
             android:parentActivityName=".MainActivity">
 
         </activity>
         <!-- Settings Activity -->
-        <activity android:name=".SettingsActivity">
+        <activity android:name=".SettingsActivity" android:theme="@style/AppTheme.NoActionBar">
 
         </activity>
 
